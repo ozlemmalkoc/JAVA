@@ -1,0 +1,289 @@
+<html>
+<head>
+<title>script.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #6a8759;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+script.js</font>
+</center></td></tr></table>
+<pre><span class="s0">/* 
+ * Copyright (c) 2013, 2022, Oracle and/or its affiliates. All rights reserved. 
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. 
+ * 
+ * This code is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License version 2 only, as 
+ * published by the Free Software Foundation.  Oracle designates this 
+ * particular file as subject to the &quot;Classpath&quot; exception as provided 
+ * by Oracle in the LICENSE file that accompanied this code. 
+ * 
+ * This code is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+ * version 2 for more details (a copy is included in the LICENSE file that 
+ * accompanied this code). 
+ * 
+ * You should have received a copy of the GNU General Public License version 
+ * 2 along with this work; if not, write to the Free Software Foundation, 
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA. 
+ * 
+ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA 
+ * or visit www.oracle.com if you need additional information or have any 
+ * questions. 
+ */</span>
+
+<span class="s2">var </span><span class="s1">moduleSearchIndex;</span>
+<span class="s2">var </span><span class="s1">packageSearchIndex;</span>
+<span class="s2">var </span><span class="s1">typeSearchIndex;</span>
+<span class="s2">var </span><span class="s1">memberSearchIndex;</span>
+<span class="s2">var </span><span class="s1">tagSearchIndex;</span>
+
+<span class="s2">var </span><span class="s1">oddRowColor = </span><span class="s3">&quot;odd-row-color&quot;</span><span class="s1">;</span>
+<span class="s2">var </span><span class="s1">evenRowColor = </span><span class="s3">&quot;even-row-color&quot;</span><span class="s1">;</span>
+<span class="s2">var </span><span class="s1">sortAsc = </span><span class="s3">&quot;sort-asc&quot;</span><span class="s1">;</span>
+<span class="s2">var </span><span class="s1">sortDesc = </span><span class="s3">&quot;sort-desc&quot;</span><span class="s1">;</span>
+<span class="s2">var </span><span class="s1">tableTab = </span><span class="s3">&quot;table-tab&quot;</span><span class="s1">;</span>
+<span class="s2">var </span><span class="s1">activeTableTab = </span><span class="s3">&quot;active-table-tab&quot;</span><span class="s1">;</span>
+
+<span class="s2">function </span><span class="s1">loadScripts(doc, tag) {</span>
+    <span class="s1">createElem(doc, tag, </span><span class="s3">'search.js'</span><span class="s1">);</span>
+
+    <span class="s1">createElem(doc, tag, </span><span class="s3">'module-search-index.js'</span><span class="s1">);</span>
+    <span class="s1">createElem(doc, tag, </span><span class="s3">'package-search-index.js'</span><span class="s1">);</span>
+    <span class="s1">createElem(doc, tag, </span><span class="s3">'type-search-index.js'</span><span class="s1">);</span>
+    <span class="s1">createElem(doc, tag, </span><span class="s3">'member-search-index.js'</span><span class="s1">);</span>
+    <span class="s1">createElem(doc, tag, </span><span class="s3">'tag-search-index.js'</span><span class="s1">);</span>
+<span class="s1">}</span>
+
+<span class="s2">function </span><span class="s1">createElem(doc, tag, path) {</span>
+    <span class="s2">var </span><span class="s1">script = doc.createElement(tag);</span>
+    <span class="s2">var </span><span class="s1">scriptElement = doc.getElementsByTagName(tag)[</span><span class="s4">0</span><span class="s1">];</span>
+    <span class="s1">script.src = pathtoroot + path;</span>
+    <span class="s1">scriptElement.parentNode.insertBefore(script, scriptElement);</span>
+<span class="s1">}</span>
+
+<span class="s0">// Helper for  making content containing release names comparable lexicographically</span>
+<span class="s2">function </span><span class="s1">makeComparable(s) {</span>
+    <span class="s2">return </span><span class="s1">s.toLowerCase().replace(/(\d+)/g,</span>
+        <span class="s2">function</span><span class="s1">(n, m) {</span>
+            <span class="s2">return </span><span class="s1">(</span><span class="s3">&quot;000&quot; </span><span class="s1">+ m).slice(-</span><span class="s4">4</span><span class="s1">);</span>
+        <span class="s1">});</span>
+<span class="s1">}</span>
+
+<span class="s0">// Switches between two styles depending on a condition</span>
+<span class="s2">function </span><span class="s1">toggleStyle(classList, condition, trueStyle, falseStyle) {</span>
+    <span class="s2">if </span><span class="s1">(condition) {</span>
+        <span class="s1">classList.remove(falseStyle);</span>
+        <span class="s1">classList.add(trueStyle);</span>
+    <span class="s1">} </span><span class="s2">else </span><span class="s1">{</span>
+        <span class="s1">classList.remove(trueStyle);</span>
+        <span class="s1">classList.add(falseStyle);</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s0">// Sorts the rows in a table lexicographically by the content of a specific column</span>
+<span class="s2">function </span><span class="s1">sortTable(header, columnIndex, columns) {</span>
+    <span class="s2">var </span><span class="s1">container = header.parentElement;</span>
+    <span class="s2">var </span><span class="s1">descending = header.classList.contains(sortAsc);</span>
+    <span class="s1">container.querySelectorAll(</span><span class="s3">&quot;div.table-header&quot;</span><span class="s1">).forEach(</span>
+        <span class="s2">function</span><span class="s1">(header) {</span>
+            <span class="s1">header.classList.remove(sortAsc);</span>
+            <span class="s1">header.classList.remove(sortDesc);</span>
+        <span class="s1">}</span>
+    <span class="s1">)</span>
+    <span class="s2">var </span><span class="s1">cells = container.children;</span>
+    <span class="s2">var </span><span class="s1">rows = [];</span>
+    <span class="s2">for </span><span class="s1">(</span><span class="s2">var </span><span class="s1">i = columns; i &lt; cells.length; i += columns) {</span>
+        <span class="s1">rows.push(Array.prototype.slice.call(cells, i, i + columns));</span>
+    <span class="s1">}</span>
+    <span class="s2">var </span><span class="s1">comparator = </span><span class="s2">function</span><span class="s1">(a, b) {</span>
+        <span class="s2">var </span><span class="s1">ka = makeComparable(a[columnIndex].textContent);</span>
+        <span class="s2">var </span><span class="s1">kb = makeComparable(b[columnIndex].textContent);</span>
+        <span class="s2">if </span><span class="s1">(ka &lt; kb)</span>
+            <span class="s2">return </span><span class="s1">descending ? </span><span class="s4">1 </span><span class="s1">: -</span><span class="s4">1</span><span class="s1">;</span>
+        <span class="s2">if </span><span class="s1">(ka &gt; kb)</span>
+            <span class="s2">return </span><span class="s1">descending ? -</span><span class="s4">1 </span><span class="s1">: </span><span class="s4">1</span><span class="s1">;</span>
+        <span class="s2">return </span><span class="s4">0</span><span class="s1">;</span>
+    <span class="s1">};</span>
+    <span class="s2">var </span><span class="s1">sorted = rows.sort(comparator);</span>
+    <span class="s2">var </span><span class="s1">visible = </span><span class="s4">0</span><span class="s1">;</span>
+    <span class="s1">sorted.forEach(</span><span class="s2">function</span><span class="s1">(row) {</span>
+        <span class="s2">if </span><span class="s1">(row[</span><span class="s4">0</span><span class="s1">].style.display !== </span><span class="s3">'none'</span><span class="s1">) {</span>
+            <span class="s2">var </span><span class="s1">isEvenRow = visible++ % </span><span class="s4">2 </span><span class="s1">=== </span><span class="s4">0</span><span class="s1">;</span>
+        <span class="s1">}</span>
+        <span class="s1">row.forEach(</span><span class="s2">function</span><span class="s1">(cell) {</span>
+            <span class="s1">toggleStyle(cell.classList, isEvenRow, evenRowColor, oddRowColor);</span>
+            <span class="s1">container.appendChild(cell);</span>
+        <span class="s1">})</span>
+    <span class="s1">});</span>
+    <span class="s1">toggleStyle(header.classList, descending, sortDesc, sortAsc);</span>
+<span class="s1">}</span>
+
+<span class="s0">// Toggles the visibility of a table category in all tables in a page</span>
+<span class="s2">function </span><span class="s1">toggleGlobal(checkbox, selected, columns) {</span>
+    <span class="s2">var </span><span class="s1">display = checkbox.checked ? </span><span class="s3">'' </span><span class="s1">: </span><span class="s3">'none'</span><span class="s1">;</span>
+    <span class="s1">document.querySelectorAll(</span><span class="s3">&quot;div.table-tabs&quot;</span><span class="s1">).forEach(</span><span class="s2">function</span><span class="s1">(t) {</span>
+        <span class="s2">var </span><span class="s1">id = t.parentElement.getAttribute(</span><span class="s3">&quot;id&quot;</span><span class="s1">);</span>
+        <span class="s2">var </span><span class="s1">selectedClass = id + </span><span class="s3">&quot;-tab&quot; </span><span class="s1">+ selected;</span>
+        <span class="s0">// if selected is empty string it selects all uncategorized entries</span>
+        <span class="s2">var </span><span class="s1">selectUncategorized = !Boolean(selected);</span>
+        <span class="s2">var </span><span class="s1">visible = </span><span class="s4">0</span><span class="s1">;</span>
+        <span class="s1">document.querySelectorAll(</span><span class="s3">'div.' </span><span class="s1">+ id)</span>
+            <span class="s1">.forEach(</span><span class="s2">function</span><span class="s1">(elem) {</span>
+                <span class="s2">if </span><span class="s1">(selectUncategorized) {</span>
+                    <span class="s2">if </span><span class="s1">(elem.className.indexOf(selectedClass) === -</span><span class="s4">1</span><span class="s1">) {</span>
+                        <span class="s1">elem.style.display = display;</span>
+                    <span class="s1">}</span>
+                <span class="s1">} </span><span class="s2">else if </span><span class="s1">(elem.classList.contains(selectedClass)) {</span>
+                    <span class="s1">elem.style.display = display;</span>
+                <span class="s1">}</span>
+                <span class="s2">if </span><span class="s1">(elem.style.display === </span><span class="s3">''</span><span class="s1">) {</span>
+                    <span class="s2">var </span><span class="s1">isEvenRow = visible++ % (columns * </span><span class="s4">2</span><span class="s1">) &lt; columns;</span>
+                    <span class="s1">toggleStyle(elem.classList, isEvenRow, evenRowColor, oddRowColor);</span>
+                <span class="s1">}</span>
+            <span class="s1">});</span>
+        <span class="s2">var </span><span class="s1">displaySection = visible === </span><span class="s4">0 </span><span class="s1">? </span><span class="s3">'none' </span><span class="s1">: </span><span class="s3">''</span><span class="s1">;</span>
+        <span class="s1">t.parentElement.style.display = displaySection;</span>
+        <span class="s1">document.querySelector(</span><span class="s3">&quot;li#contents-&quot; </span><span class="s1">+ id).style.display = displaySection;</span>
+    <span class="s1">})</span>
+<span class="s1">}</span>
+
+<span class="s0">// Shows the elements of a table belonging to a specific category</span>
+<span class="s2">function </span><span class="s1">show(tableId, selected, columns) {</span>
+    <span class="s2">if </span><span class="s1">(tableId !== selected) {</span>
+        <span class="s1">document.querySelectorAll(</span><span class="s3">'div.' </span><span class="s1">+ tableId + </span><span class="s3">':not(.' </span><span class="s1">+ selected + </span><span class="s3">')'</span><span class="s1">)</span>
+            <span class="s1">.forEach(</span><span class="s2">function</span><span class="s1">(elem) {</span>
+                <span class="s1">elem.style.display = </span><span class="s3">'none'</span><span class="s1">;</span>
+            <span class="s1">});</span>
+    <span class="s1">}</span>
+    <span class="s1">document.querySelectorAll(</span><span class="s3">'div.' </span><span class="s1">+ selected)</span>
+        <span class="s1">.forEach(</span><span class="s2">function</span><span class="s1">(elem, index) {</span>
+            <span class="s1">elem.style.display = </span><span class="s3">''</span><span class="s1">;</span>
+            <span class="s2">var </span><span class="s1">isEvenRow = index % (columns * </span><span class="s4">2</span><span class="s1">) &lt; columns;</span>
+            <span class="s1">toggleStyle(elem.classList, isEvenRow, evenRowColor, oddRowColor);</span>
+        <span class="s1">});</span>
+    <span class="s1">updateTabs(tableId, selected);</span>
+<span class="s1">}</span>
+
+<span class="s2">function </span><span class="s1">updateTabs(tableId, selected) {</span>
+    <span class="s1">document.querySelector(</span><span class="s3">'div#' </span><span class="s1">+ tableId +</span><span class="s3">' .summary-table'</span><span class="s1">)</span>
+        <span class="s1">.setAttribute(</span><span class="s3">'aria-labelledby'</span><span class="s1">, selected);</span>
+    <span class="s1">document.querySelectorAll(</span><span class="s3">'button[id^=&quot;' </span><span class="s1">+ tableId + </span><span class="s3">'&quot;]'</span><span class="s1">)</span>
+        <span class="s1">.forEach(</span><span class="s2">function</span><span class="s1">(tab, index) {</span>
+            <span class="s2">if </span><span class="s1">(selected === tab.id || (tableId === selected &amp;&amp; index === </span><span class="s4">0</span><span class="s1">)) {</span>
+                <span class="s1">tab.className = activeTableTab;</span>
+                <span class="s1">tab.setAttribute(</span><span class="s3">'aria-selected'</span><span class="s1">, </span><span class="s2">true</span><span class="s1">);</span>
+                <span class="s1">tab.setAttribute(</span><span class="s3">'tabindex'</span><span class="s1">,</span><span class="s4">0</span><span class="s1">);</span>
+            <span class="s1">} </span><span class="s2">else </span><span class="s1">{</span>
+                <span class="s1">tab.className = tableTab;</span>
+                <span class="s1">tab.setAttribute(</span><span class="s3">'aria-selected'</span><span class="s1">, </span><span class="s2">false</span><span class="s1">);</span>
+                <span class="s1">tab.setAttribute(</span><span class="s3">'tabindex'</span><span class="s1">,-</span><span class="s4">1</span><span class="s1">);</span>
+            <span class="s1">}</span>
+        <span class="s1">});</span>
+<span class="s1">}</span>
+
+<span class="s2">function </span><span class="s1">switchTab(e) {</span>
+    <span class="s2">var </span><span class="s1">selected = document.querySelector(</span><span class="s3">'[aria-selected=true]'</span><span class="s1">);</span>
+    <span class="s2">if </span><span class="s1">(selected) {</span>
+        <span class="s2">if </span><span class="s1">((e.keyCode === </span><span class="s4">37 </span><span class="s1">|| e.keyCode === </span><span class="s4">38</span><span class="s1">) &amp;&amp; selected.previousSibling) {</span>
+            <span class="s0">// left or up arrow key pressed: move focus to previous tab</span>
+            <span class="s1">selected.previousSibling.click();</span>
+            <span class="s1">selected.previousSibling.focus();</span>
+            <span class="s1">e.preventDefault();</span>
+        <span class="s1">} </span><span class="s2">else if </span><span class="s1">((e.keyCode === </span><span class="s4">39 </span><span class="s1">|| e.keyCode === </span><span class="s4">40</span><span class="s1">) &amp;&amp; selected.nextSibling) {</span>
+            <span class="s0">// right or down arrow key pressed: move focus to next tab</span>
+            <span class="s1">selected.nextSibling.click();</span>
+            <span class="s1">selected.nextSibling.focus();</span>
+            <span class="s1">e.preventDefault();</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s2">var </span><span class="s1">updateSearchResults = </span><span class="s2">function</span><span class="s1">() {};</span>
+
+<span class="s2">function </span><span class="s1">indexFilesLoaded() {</span>
+    <span class="s2">return </span><span class="s1">moduleSearchIndex</span>
+        <span class="s1">&amp;&amp; packageSearchIndex</span>
+        <span class="s1">&amp;&amp; typeSearchIndex</span>
+        <span class="s1">&amp;&amp; memberSearchIndex</span>
+        <span class="s1">&amp;&amp; tagSearchIndex;</span>
+<span class="s1">}</span>
+<span class="s0">// Copy the contents of the local snippet to the clipboard</span>
+<span class="s2">function </span><span class="s1">copySnippet(button) {</span>
+    <span class="s1">copyToClipboard(button.nextElementSibling.innerText);</span>
+    <span class="s1">switchCopyLabel(button.firstElementChild, button.parentElement);</span>
+<span class="s1">}</span>
+<span class="s0">// Copy the link to the adjacent header to the clipboard</span>
+<span class="s2">function </span><span class="s1">copyUrl(button) {</span>
+    <span class="s2">var </span><span class="s1">id;</span>
+    <span class="s2">var </span><span class="s1">header = button.parentElement;</span>
+    <span class="s2">if </span><span class="s1">(header.hasAttribute(</span><span class="s3">&quot;id&quot;</span><span class="s1">)) {</span>
+        <span class="s1">id = header.getAttribute(</span><span class="s3">&quot;id&quot;</span><span class="s1">);</span>
+    <span class="s1">} </span><span class="s2">else if </span><span class="s1">(header.parentElement.tagName === </span><span class="s3">'SECTION' </span><span class="s1">&amp;&amp; header.parentElement.hasAttribute(</span><span class="s3">&quot;id&quot;</span><span class="s1">)) {</span>
+        <span class="s1">id = header.parentElement.getAttribute(</span><span class="s3">&quot;id&quot;</span><span class="s1">);</span>
+    <span class="s1">} </span><span class="s2">else if </span><span class="s1">(header.firstElementChild &amp;&amp; header.firstElementChild.tagName === </span><span class="s3">&quot;A&quot;</span>
+                                        <span class="s1">&amp;&amp; header.firstElementChild.hasAttribute(</span><span class="s3">&quot;id&quot;</span><span class="s1">)) {</span>
+        <span class="s1">id = header.firstElementChild.getAttribute(</span><span class="s3">&quot;id&quot;</span><span class="s1">);</span>
+    <span class="s1">}</span>
+    <span class="s2">var </span><span class="s1">url = document.location.href;</span>
+    <span class="s2">if </span><span class="s1">(url.indexOf(</span><span class="s3">&quot;#&quot;</span><span class="s1">) &gt; -</span><span class="s4">1</span><span class="s1">) {</span>
+        <span class="s1">url = url.substring(</span><span class="s4">0</span><span class="s1">, url.indexOf(</span><span class="s3">&quot;#&quot;</span><span class="s1">));</span>
+    <span class="s1">}</span>
+    <span class="s1">copyToClipboard(url + </span><span class="s3">&quot;#&quot; </span><span class="s1">+ id);</span>
+    <span class="s1">switchCopyLabel(button.lastElementChild, button.parentElement);</span>
+<span class="s1">}</span>
+<span class="s2">function </span><span class="s1">copyToClipboard(content) {</span>
+    <span class="s2">var </span><span class="s1">textarea = document.createElement(</span><span class="s3">&quot;textarea&quot;</span><span class="s1">);</span>
+    <span class="s1">textarea.style.height = </span><span class="s4">0</span><span class="s1">;</span>
+    <span class="s1">document.body.appendChild(textarea);</span>
+    <span class="s1">textarea.value = content;</span>
+    <span class="s1">textarea.select();</span>
+    <span class="s1">document.execCommand(</span><span class="s3">&quot;copy&quot;</span><span class="s1">);</span>
+    <span class="s1">document.body.removeChild(textarea);</span>
+<span class="s1">}</span>
+<span class="s2">function </span><span class="s1">switchCopyLabel(span, parent) {</span>
+    <span class="s2">var </span><span class="s1">copied = span.getAttribute(</span><span class="s3">&quot;data-copied&quot;</span><span class="s1">);</span>
+    <span class="s2">if </span><span class="s1">(span.innerHTML !== copied) {</span>
+        <span class="s2">var </span><span class="s1">initialLabel = span.innerHTML;</span>
+        <span class="s1">span.innerHTML = copied;</span>
+        <span class="s1">parent.onmouseleave = parent.ontouchend = </span><span class="s2">function</span><span class="s1">() {</span>
+            <span class="s1">span.innerHTML = initialLabel;</span>
+        <span class="s1">};</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s0">// Workaround for scroll position not being included in browser history (8249133)</span>
+<span class="s1">document.addEventListener(</span><span class="s3">&quot;DOMContentLoaded&quot;</span><span class="s1">, </span><span class="s2">function</span><span class="s1">(e) {</span>
+    <span class="s2">var </span><span class="s1">contentDiv = document.querySelector(</span><span class="s3">&quot;div.flex-content&quot;</span><span class="s1">);</span>
+    <span class="s1">window.addEventListener(</span><span class="s3">&quot;popstate&quot;</span><span class="s1">, </span><span class="s2">function</span><span class="s1">(e) {</span>
+        <span class="s2">if </span><span class="s1">(e.state !== </span><span class="s2">null</span><span class="s1">) {</span>
+            <span class="s1">contentDiv.scrollTop = e.state;</span>
+        <span class="s1">}</span>
+    <span class="s1">});</span>
+    <span class="s1">window.addEventListener(</span><span class="s3">&quot;hashchange&quot;</span><span class="s1">, </span><span class="s2">function</span><span class="s1">(e) {</span>
+        <span class="s1">history.replaceState(contentDiv.scrollTop, document.title);</span>
+    <span class="s1">});</span>
+    <span class="s2">var </span><span class="s1">timeoutId;</span>
+    <span class="s1">contentDiv.addEventListener(</span><span class="s3">&quot;scroll&quot;</span><span class="s1">, </span><span class="s2">function</span><span class="s1">(e) {</span>
+        <span class="s2">if </span><span class="s1">(timeoutId) {</span>
+            <span class="s1">clearTimeout(timeoutId);</span>
+        <span class="s1">}</span>
+        <span class="s1">timeoutId = setTimeout(</span><span class="s2">function</span><span class="s1">() {</span>
+            <span class="s1">history.replaceState(contentDiv.scrollTop, document.title);</span>
+        <span class="s1">}, </span><span class="s4">100</span><span class="s1">);</span>
+    <span class="s1">});</span>
+    <span class="s2">if </span><span class="s1">(!location.hash) {</span>
+        <span class="s1">history.replaceState(contentDiv.scrollTop, document.title);</span>
+    <span class="s1">}</span>
+<span class="s1">});</span>
+</pre>
+</body>
+</html>

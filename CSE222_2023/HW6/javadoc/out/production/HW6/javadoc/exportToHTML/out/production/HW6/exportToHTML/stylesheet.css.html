@@ -1,0 +1,1284 @@
+<html>
+<head>
+<title>stylesheet.css</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+stylesheet.css</font>
+</center></td></tr></table>
+<pre><span class="s0">/* 
+ * Javadoc style sheet 
+ */</span>
+
+<span class="s1">@import url(</span><span class="s2">'resources/fonts/dejavu.css'</span><span class="s1">);</span>
+
+<span class="s0">/* 
+ * These CSS custom properties (variables) define the core color and font 
+ * properties used in this stylesheet. 
+ */</span>
+<span class="s1">:root {</span>
+    <span class="s0">/* body, block and code fonts */</span>
+    <span class="s1">--body-font-family: </span><span class="s2">'DejaVu Sans'</span><span class="s1">, Arial, Helvetica, sans-serif;</span>
+    <span class="s1">--block-font-family: </span><span class="s2">'DejaVu Serif'</span><span class="s1">, Georgia, </span><span class="s2">&quot;Times New Roman&quot;</span><span class="s1">, Times, serif;</span>
+    <span class="s1">--code-font-family: </span><span class="s2">'DejaVu Sans Mono'</span><span class="s1">, monospace;</span>
+    <span class="s0">/* Base font sizes for body and code elements */</span>
+    <span class="s1">--body-font-size: </span><span class="s3">14</span><span class="s1">px;</span>
+    <span class="s1">--code-font-size: </span><span class="s3">14</span><span class="s1">px;</span>
+    <span class="s0">/* Text colors for body and block elements */</span>
+    <span class="s1">--body-text-color: #</span><span class="s3">353833</span><span class="s1">;</span>
+    <span class="s1">--block-text-color: #</span><span class="s3">474747</span><span class="s1">;</span>
+    <span class="s0">/* Background colors for various structural elements */</span>
+    <span class="s1">--body-background-color: #ffffff;</span>
+    <span class="s1">--section-background-color: #f8f8f8;</span>
+    <span class="s1">--detail-background-color: #ffffff;</span>
+    <span class="s0">/* Colors for navigation bar and table captions */</span>
+    <span class="s1">--navbar-background-color: #</span><span class="s3">4</span><span class="s1">D7A97;</span>
+    <span class="s1">--navbar-text-color: #ffffff;</span>
+    <span class="s0">/* Background color for subnavigation and various headers */</span>
+    <span class="s1">--subnav-background-color: #dee3e9;</span>
+    <span class="s0">/* Background and text colors for selected tabs and navigation items */</span>
+    <span class="s1">--selected-background-color: #f8981d;</span>
+    <span class="s1">--selected-text-color: #</span><span class="s3">253441</span><span class="s1">;</span>
+    <span class="s1">--selected-link-color: #</span><span class="s3">1</span><span class="s1">f389c;</span>
+    <span class="s0">/* Background colors for generated tables */</span>
+    <span class="s1">--even-row-color: #ffffff;</span>
+    <span class="s1">--odd-row-color: #eeeeef;</span>
+    <span class="s0">/* Text color for page title */</span>
+    <span class="s1">--title-color: #</span><span class="s3">2</span><span class="s1">c4557;</span>
+    <span class="s0">/* Text colors for links */</span>
+    <span class="s1">--link-color: #</span><span class="s3">4</span><span class="s1">A6782;</span>
+    <span class="s1">--link-color-active: #bb7a2a;</span>
+    <span class="s0">/* Snippet colors */</span>
+    <span class="s1">--snippet-background-color: #ebecee;</span>
+    <span class="s1">--snippet-text-color: var(--block-text-color);</span>
+    <span class="s1">--snippet-highlight-color: #f7c590;</span>
+    <span class="s0">/* Border colors for structural elements and user defined tables */</span>
+    <span class="s1">--border-color: #ededed;</span>
+    <span class="s1">--table-border-color: #</span><span class="s3">000000</span><span class="s1">;</span>
+    <span class="s0">/* Search input colors */</span>
+    <span class="s1">--search-input-background-color: #ffffff;</span>
+    <span class="s1">--search-input-text-color: #</span><span class="s3">000000</span><span class="s1">;</span>
+    <span class="s1">--search-input-placeholder-color: #</span><span class="s3">909090</span><span class="s1">;</span>
+    <span class="s0">/* Highlight color for active search tag target */</span>
+    <span class="s1">--search-tag-highlight-color: #ffff00;</span>
+    <span class="s0">/* Adjustments for icon and active background colors of copy-to-clipboard buttons */</span>
+    <span class="s1">--copy-icon-brightness: </span><span class="s3">100</span><span class="s1">%;</span>
+    <span class="s1">--copy-button-background-color-active: rgba(</span><span class="s3">168</span><span class="s1">, </span><span class="s3">168</span><span class="s1">, </span><span class="s3">176</span><span class="s1">, </span><span class="s3">0.3</span><span class="s1">);</span>
+    <span class="s0">/* Colors for invalid tag notifications */</span>
+    <span class="s1">--invalid-tag-background-color: #ffe6e6;</span>
+    <span class="s1">--invalid-tag-text-color: #</span><span class="s3">000000</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for individual HTML elements. 
+ * 
+ * These are styles that are specific to individual HTML elements. Changing them affects the style of a particular 
+ * HTML element throughout the page. 
+ */</span>
+<span class="s1">body {</span>
+    <span class="s1">background-color:var(--body-background-color);</span>
+    <span class="s1">color:var(--body-text-color);</span>
+    <span class="s1">font-family:var(--body-font-family);</span>
+    <span class="s1">font-size:var(--body-font-size);</span>
+    <span class="s1">margin:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">padding:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">height:</span><span class="s3">100</span><span class="s1">%;</span>
+    <span class="s1">width:</span><span class="s3">100</span><span class="s1">%;</span>
+<span class="s1">}</span>
+<span class="s1">iframe {</span>
+    <span class="s1">margin:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">padding:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">height:</span><span class="s3">100</span><span class="s1">%;</span>
+    <span class="s1">width:</span><span class="s3">100</span><span class="s1">%;</span>
+    <span class="s1">overflow-y:scroll;</span>
+    <span class="s1">border:none;</span>
+<span class="s1">}</span>
+<span class="s1">a:link, a:visited {</span>
+    <span class="s1">text-decoration:none;</span>
+    <span class="s1">color:var(--link-color);</span>
+<span class="s1">}</span>
+<span class="s1">a[href]:hover, a[href]:focus {</span>
+    <span class="s1">text-decoration:none;</span>
+    <span class="s1">color:var(--link-color-active);</span>
+<span class="s1">}</span>
+<span class="s1">pre {</span>
+    <span class="s1">font-family:var(--code-font-family);</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">h1 {</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">.</span><span class="s3">428</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">h2 {</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">.</span><span class="s3">285</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">h3 {</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">.</span><span class="s3">14</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">h4 {</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">.</span><span class="s3">072</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">h5 {</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">.</span><span class="s3">001</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">h6 {</span>
+    <span class="s1">font-size:</span><span class="s3">0</span><span class="s1">.</span><span class="s3">93</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s0">/* Disable font boosting for selected elements */</span>
+<span class="s1">h1, h2, h3, h4, h5, h6, div.member-signature {</span>
+    <span class="s1">max-height: </span><span class="s3">1000</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">ul {</span>
+    <span class="s1">list-style-type:disc;</span>
+<span class="s1">}</span>
+<span class="s1">code, tt {</span>
+    <span class="s1">font-family:var(--code-font-family);</span>
+<span class="s1">}</span>
+<span class="s1">:not(h1, h2, h3, h4, h5, h6) &gt; code,</span>
+<span class="s1">:not(h1, h2, h3, h4, h5, h6) &gt; tt {</span>
+    <span class="s1">font-size:var(--code-font-size);</span>
+    <span class="s1">padding-top:</span><span class="s3">4</span><span class="s1">px;</span>
+    <span class="s1">margin-top:</span><span class="s3">8</span><span class="s1">px;</span>
+    <span class="s1">line-height:</span><span class="s3">1</span><span class="s1">.</span><span class="s3">4</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">dt code {</span>
+    <span class="s1">font-family:var(--code-font-family);</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">em;</span>
+    <span class="s1">padding-top:</span><span class="s3">4</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">.summary-table dt code {</span>
+    <span class="s1">font-family:var(--code-font-family);</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">em;</span>
+    <span class="s1">vertical-align:top;</span>
+    <span class="s1">padding-top:</span><span class="s3">4</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">sup {</span>
+    <span class="s1">font-size:</span><span class="s3">8</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">button {</span>
+    <span class="s1">font-family: var(--body-font-family);</span>
+    <span class="s1">font-size: </span><span class="s3">1</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for HTML generated by javadoc. 
+ * 
+ * These are style classes that are used by the standard doclet to generate HTML documentation. 
+ */</span>
+
+<span class="s0">/* 
+ * Styles for document title and copyright. 
+ */</span>
+<span class="s1">.about-language {</span>
+    <span class="s1">float:right;</span>
+    <span class="s1">padding:</span><span class="s3">0 21</span><span class="s1">px </span><span class="s3">8</span><span class="s1">px </span><span class="s3">8</span><span class="s1">px;</span>
+    <span class="s1">font-size:</span><span class="s3">0</span><span class="s1">.</span><span class="s3">915</span><span class="s1">em;</span>
+    <span class="s1">margin-top:-</span><span class="s3">9</span><span class="s1">px;</span>
+    <span class="s1">height:</span><span class="s3">2</span><span class="s1">.</span><span class="s3">9</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">.legal-copy {</span>
+    <span class="s1">margin-left:.</span><span class="s3">5</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for navigation bar. 
+ */</span>
+<span class="s1">@media screen {</span>
+    <span class="s1">div.flex-box {</span>
+        <span class="s1">position:fixed;</span>
+        <span class="s1">display:flex;</span>
+        <span class="s1">flex-direction:column;</span>
+        <span class="s1">height: </span><span class="s3">100</span><span class="s1">%;</span>
+        <span class="s1">width: </span><span class="s3">100</span><span class="s1">%;</span>
+    <span class="s1">}</span>
+    <span class="s1">header.flex-header {</span>
+        <span class="s1">flex: </span><span class="s3">0 0 </span><span class="s1">auto;</span>
+    <span class="s1">}</span>
+    <span class="s1">div.flex-content {</span>
+        <span class="s1">flex: </span><span class="s3">1 1 </span><span class="s1">auto;</span>
+        <span class="s1">overflow-y: auto;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s1">.top-nav {</span>
+    <span class="s1">background-color:var(--navbar-background-color);</span>
+    <span class="s1">color:var(--navbar-text-color);</span>
+    <span class="s1">float:left;</span>
+    <span class="s1">width:</span><span class="s3">100</span><span class="s1">%;</span>
+    <span class="s1">clear:right;</span>
+    <span class="s1">min-height:</span><span class="s3">2</span><span class="s1">.</span><span class="s3">8</span><span class="s1">em;</span>
+    <span class="s1">padding:</span><span class="s3">10</span><span class="s1">px </span><span class="s3">0 0 0</span><span class="s1">;</span>
+    <span class="s1">overflow:hidden;</span>
+    <span class="s1">font-size:</span><span class="s3">0</span><span class="s1">.</span><span class="s3">857</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">button#navbar-toggle-button {</span>
+    <span class="s1">display:none;</span>
+<span class="s1">}</span>
+<span class="s1">ul.sub-nav-list-small {</span>
+    <span class="s1">display: none;</span>
+<span class="s1">}</span>
+<span class="s1">.sub-nav {</span>
+    <span class="s1">background-color:var(--subnav-background-color);</span>
+    <span class="s1">float:left;</span>
+    <span class="s1">width:</span><span class="s3">100</span><span class="s1">%;</span>
+    <span class="s1">overflow:hidden;</span>
+    <span class="s1">font-size:</span><span class="s3">0</span><span class="s1">.</span><span class="s3">857</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">.sub-nav div {</span>
+    <span class="s1">clear:left;</span>
+    <span class="s1">float:left;</span>
+    <span class="s1">padding:</span><span class="s3">6</span><span class="s1">px;</span>
+    <span class="s1">text-transform:uppercase;</span>
+<span class="s1">}</span>
+<span class="s1">.sub-nav .sub-nav-list {</span>
+    <span class="s1">padding-top:</span><span class="s3">4</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">ul.nav-list {</span>
+    <span class="s1">display:block;</span>
+    <span class="s1">margin:</span><span class="s3">0 25</span><span class="s1">px </span><span class="s3">0 0</span><span class="s1">;</span>
+    <span class="s1">padding:</span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">ul.sub-nav-list {</span>
+    <span class="s1">float:left;</span>
+    <span class="s1">margin:</span><span class="s3">0 25</span><span class="s1">px </span><span class="s3">0 0</span><span class="s1">;</span>
+    <span class="s1">padding:</span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">ul.nav-list li {</span>
+    <span class="s1">list-style:none;</span>
+    <span class="s1">float:left;</span>
+    <span class="s1">padding: </span><span class="s3">5</span><span class="s1">px </span><span class="s3">6</span><span class="s1">px;</span>
+    <span class="s1">text-transform:uppercase;</span>
+<span class="s1">}</span>
+<span class="s1">.sub-nav .nav-list-search {</span>
+    <span class="s1">float:right;</span>
+    <span class="s1">margin:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">padding:</span><span class="s3">6</span><span class="s1">px;</span>
+    <span class="s1">clear:none;</span>
+    <span class="s1">text-align:right;</span>
+    <span class="s1">position:relative;</span>
+<span class="s1">}</span>
+<span class="s1">ul.sub-nav-list li {</span>
+    <span class="s1">list-style:none;</span>
+    <span class="s1">float:left;</span>
+<span class="s1">}</span>
+<span class="s1">.top-nav a:link, .top-nav a:active, .top-nav a:visited {</span>
+    <span class="s1">color:var(--navbar-text-color);</span>
+    <span class="s1">text-decoration:none;</span>
+    <span class="s1">text-transform:uppercase;</span>
+<span class="s1">}</span>
+<span class="s1">.top-nav a:hover {</span>
+    <span class="s1">color:var(--link-color-active);</span>
+<span class="s1">}</span>
+<span class="s1">.nav-bar-cell1-rev {</span>
+    <span class="s1">background-color:var(--selected-background-color);</span>
+    <span class="s1">color:var(--selected-text-color);</span>
+    <span class="s1">margin: auto </span><span class="s3">5</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">.skip-nav {</span>
+    <span class="s1">position:absolute;</span>
+    <span class="s1">top:auto;</span>
+    <span class="s1">left:-</span><span class="s3">9999</span><span class="s1">px;</span>
+    <span class="s1">overflow:hidden;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Hide navigation links and search box in print layout 
+ */</span>
+<span class="s1">@media print {</span>
+    <span class="s1">ul.nav-list, div.sub-nav  {</span>
+        <span class="s1">display:none;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for page header. 
+ */</span>
+<span class="s1">.title {</span>
+    <span class="s1">color:var(--title-color);</span>
+    <span class="s1">margin:</span><span class="s3">10</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">.sub-title {</span>
+    <span class="s1">margin:</span><span class="s3">5</span><span class="s1">px </span><span class="s3">0 0 0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">ul.contents-list {</span>
+    <span class="s1">margin: </span><span class="s3">0 0 15</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">padding: </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">list-style: none;</span>
+<span class="s1">}</span>
+<span class="s1">ul.contents-list li {</span>
+    <span class="s1">font-size:</span><span class="s3">0</span><span class="s1">.</span><span class="s3">93</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for headings. 
+ */</span>
+<span class="s1">body.class-declaration-page .summary h2,</span>
+<span class="s1">body.class-declaration-page .details h2,</span>
+<span class="s1">body.class-use-page h2,</span>
+<span class="s1">body.module-declaration-page .block-list h2 {</span>
+    <span class="s1">font-style: italic;</span>
+    <span class="s1">padding:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">margin:</span><span class="s3">15</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">body.class-declaration-page .summary h3,</span>
+<span class="s1">body.class-declaration-page .details h3,</span>
+<span class="s1">body.class-declaration-page .summary .inherited-list h2 {</span>
+    <span class="s1">background-color:var(--subnav-background-color);</span>
+    <span class="s1">border:</span><span class="s3">1</span><span class="s1">px solid var(--border-color);</span>
+    <span class="s1">margin:</span><span class="s3">0 0 6</span><span class="s1">px -</span><span class="s3">8</span><span class="s1">px;</span>
+    <span class="s1">padding:</span><span class="s3">7</span><span class="s1">px </span><span class="s3">5</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for page layout containers. 
+ */</span>
+<span class="s1">main {</span>
+    <span class="s1">clear:both;</span>
+    <span class="s1">padding:</span><span class="s3">10</span><span class="s1">px </span><span class="s3">20</span><span class="s1">px;</span>
+    <span class="s1">position:relative;</span>
+<span class="s1">}</span>
+<span class="s1">dl.notes &gt; dt {</span>
+    <span class="s1">font-family: var(--body-font-family);</span>
+    <span class="s1">font-size:</span><span class="s3">0</span><span class="s1">.</span><span class="s3">856</span><span class="s1">em;</span>
+    <span class="s1">font-weight:bold;</span>
+    <span class="s1">margin:</span><span class="s3">10</span><span class="s1">px </span><span class="s3">0 0 0</span><span class="s1">;</span>
+    <span class="s1">color:var(--body-text-color);</span>
+<span class="s1">}</span>
+<span class="s1">dl.notes &gt; dd {</span>
+    <span class="s1">margin:</span><span class="s3">5</span><span class="s1">px </span><span class="s3">10</span><span class="s1">px </span><span class="s3">10</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">em;</span>
+    <span class="s1">font-family:var(--block-font-family)</span>
+<span class="s1">}</span>
+<span class="s1">dl.name-value &gt; dt {</span>
+    <span class="s1">margin-left:</span><span class="s3">1</span><span class="s1">px;</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">.</span><span class="s3">1</span><span class="s1">em;</span>
+    <span class="s1">display:inline;</span>
+    <span class="s1">font-weight:bold;</span>
+<span class="s1">}</span>
+<span class="s1">dl.name-value &gt; dd {</span>
+    <span class="s1">margin:</span><span class="s3">0 0 0 1</span><span class="s1">px;</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">.</span><span class="s3">1</span><span class="s1">em;</span>
+    <span class="s1">display:inline;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for lists. 
+ */</span>
+<span class="s1">li.circle {</span>
+    <span class="s1">list-style:circle;</span>
+<span class="s1">}</span>
+<span class="s1">ul.horizontal li {</span>
+    <span class="s1">display:inline;</span>
+    <span class="s1">font-size:</span><span class="s3">0</span><span class="s1">.</span><span class="s3">9</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">div.inheritance {</span>
+    <span class="s1">margin:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">padding:</span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">div.inheritance div.inheritance {</span>
+    <span class="s1">margin-left:</span><span class="s3">2</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">ul.block-list,</span>
+<span class="s1">ul.details-list,</span>
+<span class="s1">ul.member-list,</span>
+<span class="s1">ul.summary-list {</span>
+    <span class="s1">margin:</span><span class="s3">10</span><span class="s1">px </span><span class="s3">0 10</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">padding:</span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">ul.block-list &gt; li,</span>
+<span class="s1">ul.details-list &gt; li,</span>
+<span class="s1">ul.member-list &gt; li,</span>
+<span class="s1">ul.summary-list &gt; li {</span>
+    <span class="s1">list-style:none;</span>
+    <span class="s1">margin-bottom:</span><span class="s3">15</span><span class="s1">px;</span>
+    <span class="s1">line-height:</span><span class="s3">1.4</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">ul.ref-list {</span>
+  <span class="s1">padding:</span><span class="s3">0</span><span class="s1">;</span>
+  <span class="s1">margin:</span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">ul.ref-list &gt; li {</span>
+    <span class="s1">list-style:none;</span>
+<span class="s1">}</span>
+<span class="s1">.summary-table dl, .summary-table dl dt, .summary-table dl dd {</span>
+    <span class="s1">margin-top:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">margin-bottom:</span><span class="s3">1</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">ul.tag-list, ul.tag-list-long {</span>
+    <span class="s1">padding-left: </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">list-style: none;</span>
+<span class="s1">}</span>
+<span class="s1">ul.tag-list li {</span>
+    <span class="s1">display: inline;</span>
+<span class="s1">}</span>
+<span class="s1">ul.tag-list li:not(:last-child):after,</span>
+<span class="s1">ul.tag-list-long li:not(:last-child):after</span>
+<span class="s1">{</span>
+    <span class="s1">content: </span><span class="s2">&quot;, &quot;</span><span class="s1">;</span>
+    <span class="s1">white-space: pre-wrap;</span>
+<span class="s1">}</span>
+<span class="s1">ul.preview-feature-list {</span>
+    <span class="s1">list-style: none;</span>
+    <span class="s1">margin:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">padding:</span><span class="s3">0</span><span class="s1">.</span><span class="s3">1</span><span class="s1">em;</span>
+    <span class="s1">line-height: </span><span class="s3">1</span><span class="s1">.</span><span class="s3">6</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for tables. 
+ */</span>
+<span class="s1">.summary-table, .details-table {</span>
+    <span class="s1">width:</span><span class="s3">100</span><span class="s1">%;</span>
+    <span class="s1">border-spacing:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">border:</span><span class="s3">1</span><span class="s1">px solid var(--border-color);</span>
+    <span class="s1">border-top:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">padding:</span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">.caption {</span>
+    <span class="s1">position:relative;</span>
+    <span class="s1">text-align:left;</span>
+    <span class="s1">background-repeat:no-repeat;</span>
+    <span class="s1">color:var(--selected-text-color);</span>
+    <span class="s1">clear:none;</span>
+    <span class="s1">overflow:hidden;</span>
+    <span class="s1">padding: </span><span class="s3">10</span><span class="s1">px </span><span class="s3">0 0 1</span><span class="s1">px;</span>
+    <span class="s1">margin:</span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">.caption a:link, .caption a:visited {</span>
+    <span class="s1">color:var(--selected-link-color);</span>
+<span class="s1">}</span>
+<span class="s1">.caption a:hover,</span>
+<span class="s1">.caption a:active {</span>
+    <span class="s1">color:var(--navbar-text-color);</span>
+<span class="s1">}</span>
+<span class="s1">.caption span {</span>
+    <span class="s1">font-weight:bold;</span>
+    <span class="s1">white-space:nowrap;</span>
+    <span class="s1">padding:</span><span class="s3">5</span><span class="s1">px </span><span class="s3">12</span><span class="s1">px </span><span class="s3">7</span><span class="s1">px </span><span class="s3">12</span><span class="s1">px;</span>
+    <span class="s1">display:inline-block;</span>
+    <span class="s1">float:left;</span>
+    <span class="s1">background-color:var(--selected-background-color);</span>
+    <span class="s1">border: none;</span>
+    <span class="s1">height:</span><span class="s3">16</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">div.table-tabs {</span>
+    <span class="s1">padding:</span><span class="s3">10</span><span class="s1">px </span><span class="s3">0 0 1</span><span class="s1">px;</span>
+    <span class="s1">margin:</span><span class="s3">10</span><span class="s1">px </span><span class="s3">0 0 0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">div.table-tabs &gt; button {</span>
+    <span class="s1">border: none;</span>
+    <span class="s1">cursor: pointer;</span>
+    <span class="s1">padding: </span><span class="s3">5</span><span class="s1">px </span><span class="s3">12</span><span class="s1">px </span><span class="s3">7</span><span class="s1">px </span><span class="s3">12</span><span class="s1">px;</span>
+    <span class="s1">font-weight: bold;</span>
+    <span class="s1">margin-right: </span><span class="s3">8</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">div.table-tabs &gt; .active-table-tab {</span>
+    <span class="s1">background: var(--selected-background-color);</span>
+    <span class="s1">color: var(--selected-text-color);</span>
+<span class="s1">}</span>
+<span class="s1">div.table-tabs &gt; button.table-tab {</span>
+    <span class="s1">background: var(--navbar-background-color);</span>
+    <span class="s1">color: var(--navbar-text-color);</span>
+<span class="s1">}</span>
+<span class="s1">.two-column-search-results {</span>
+    <span class="s1">display: grid;</span>
+    <span class="s1">grid-template-columns: minmax(</span><span class="s3">400</span><span class="s1">px, max-content) minmax(</span><span class="s3">400</span><span class="s1">px, auto);</span>
+<span class="s1">}</span>
+<span class="s1">div.checkboxes {</span>
+    <span class="s1">line-height: </span><span class="s3">2</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">div.checkboxes &gt; span {</span>
+    <span class="s1">margin-left: </span><span class="s3">10</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">div.checkboxes &gt; label {</span>
+    <span class="s1">margin-left: </span><span class="s3">8</span><span class="s1">px;</span>
+    <span class="s1">white-space: nowrap;</span>
+<span class="s1">}</span>
+<span class="s1">div.checkboxes &gt; label &gt; input {</span>
+    <span class="s1">margin: </span><span class="s3">0 2</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">.two-column-summary {</span>
+    <span class="s1">display: grid;</span>
+    <span class="s1">grid-template-columns: minmax(</span><span class="s3">25</span><span class="s1">%, max-content) minmax(</span><span class="s3">25</span><span class="s1">%, auto);</span>
+<span class="s1">}</span>
+<span class="s1">.three-column-summary {</span>
+    <span class="s1">display: grid;</span>
+    <span class="s1">grid-template-columns: minmax(</span><span class="s3">15</span><span class="s1">%, max-content) minmax(</span><span class="s3">20</span><span class="s1">%, max-content) minmax(</span><span class="s3">20</span><span class="s1">%, auto);</span>
+<span class="s1">}</span>
+<span class="s1">.three-column-release-summary {</span>
+    <span class="s1">display: grid;</span>
+    <span class="s1">grid-template-columns: minmax(</span><span class="s3">40</span><span class="s1">%, max-content) minmax(</span><span class="s3">10</span><span class="s1">%, max-content) minmax(</span><span class="s3">40</span><span class="s1">%, auto);</span>
+<span class="s1">}</span>
+<span class="s1">.four-column-summary {</span>
+    <span class="s1">display: grid;</span>
+    <span class="s1">grid-template-columns: minmax(</span><span class="s3">10</span><span class="s1">%, max-content) minmax(</span><span class="s3">15</span><span class="s1">%, max-content) minmax(</span><span class="s3">15</span><span class="s1">%, max-content) minmax(</span><span class="s3">15</span><span class="s1">%, auto);</span>
+<span class="s1">}</span>
+<span class="s1">@media screen and (max-width: </span><span class="s3">1000</span><span class="s1">px) {</span>
+    <span class="s1">.four-column-summary {</span>
+        <span class="s1">display: grid;</span>
+        <span class="s1">grid-template-columns: minmax(</span><span class="s3">15</span><span class="s1">%, max-content) minmax(</span><span class="s3">15</span><span class="s1">%, auto);</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s1">@media screen and (max-width: </span><span class="s3">800</span><span class="s1">px) {</span>
+    <span class="s1">.two-column-search-results {</span>
+        <span class="s1">display: grid;</span>
+        <span class="s1">grid-template-columns: minmax(</span><span class="s3">40</span><span class="s1">%, max-content) minmax(</span><span class="s3">40</span><span class="s1">%, auto);</span>
+    <span class="s1">}</span>
+    <span class="s1">.three-column-summary {</span>
+        <span class="s1">display: grid;</span>
+        <span class="s1">grid-template-columns: minmax(</span><span class="s3">10</span><span class="s1">%, max-content) minmax(</span><span class="s3">25</span><span class="s1">%, auto);</span>
+    <span class="s1">}</span>
+    <span class="s1">.three-column-release-summary {</span>
+        <span class="s1">display: grid;</span>
+        <span class="s1">grid-template-columns: minmax(</span><span class="s3">70</span><span class="s1">%, max-content) minmax(</span><span class="s3">30</span><span class="s1">%, max-content)</span>
+    <span class="s1">}</span>
+    <span class="s1">.three-column-summary .col-last,</span>
+    <span class="s1">.three-column-release-summary .col-last{</span>
+        <span class="s1">grid-column-end: span </span><span class="s3">2</span><span class="s1">;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s1">@media screen and (max-width: </span><span class="s3">600</span><span class="s1">px) {</span>
+    <span class="s1">.two-column-summary {</span>
+        <span class="s1">display: grid;</span>
+        <span class="s1">grid-template-columns: </span><span class="s3">1</span><span class="s1">fr;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s1">.summary-table &gt; div, .details-table &gt; div {</span>
+    <span class="s1">text-align:left;</span>
+    <span class="s1">padding: </span><span class="s3">8</span><span class="s1">px </span><span class="s3">3</span><span class="s1">px </span><span class="s3">3</span><span class="s1">px </span><span class="s3">7</span><span class="s1">px;</span>
+    <span class="s1">overflow-x: auto;</span>
+    <span class="s1">scrollbar-width: thin;</span>
+<span class="s1">}</span>
+<span class="s1">.col-first, .col-second, .col-last, .col-constructor-name, .col-summary-item-name {</span>
+    <span class="s1">vertical-align:top;</span>
+    <span class="s1">padding-right:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">padding-top:</span><span class="s3">8</span><span class="s1">px;</span>
+    <span class="s1">padding-bottom:</span><span class="s3">3</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">.table-header {</span>
+    <span class="s1">background:var(--subnav-background-color);</span>
+    <span class="s1">font-weight: bold;</span>
+<span class="s1">}</span>
+<span class="s0">/* Sortable table columns */</span>
+<span class="s1">.table-header[onclick] {</span>
+    <span class="s1">cursor: pointer;</span>
+<span class="s1">}</span>
+<span class="s1">.table-header[onclick]::after {</span>
+    <span class="s1">content:</span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+    <span class="s1">display:inline-block;</span>
+    <span class="s1">background-image:url(</span><span class="s2">'data:image/svg+xml; utf8, \</span>
+    <span class="s1">&lt;svg xmlns=</span><span class="s2">&quot;http://www.w3.org/2000/svg&quot; </span><span class="s1">width=</span><span class="s2">&quot;125&quot; </span><span class="s1">height=</span><span class="s2">&quot;170&quot;</span><span class="s1">&gt; \</span>
+    <span class="s1">&lt;path d=</span><span class="s2">&quot;M10.101 57.059L63.019 4.142l52.917 52.917M10.101 86.392l52.917 52.917 52.917-52.917&quot; </span><span class="s1">style=</span><span class="s2">&quot;opacity:.35;&quot;</span><span class="s1">/&gt;&lt;/svg&gt;</span><span class="s2">');</span>
+    <span class="s1">background-size:</span><span class="s3">100</span><span class="s1">% </span><span class="s3">100</span><span class="s1">%;</span>
+    <span class="s1">width:</span><span class="s3">9</span><span class="s1">px;</span>
+    <span class="s1">height:</span><span class="s3">14</span><span class="s1">px;</span>
+    <span class="s1">margin-left:</span><span class="s3">4</span><span class="s1">px;</span>
+    <span class="s1">margin-bottom:-</span><span class="s3">3</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">.table-header[onclick].sort-asc::after {</span>
+    <span class="s1">background-image:url(</span><span class="s2">'data:image/svg+xml; utf8, \</span>
+    <span class="s1">&lt;svg xmlns=</span><span class="s2">&quot;http://www.w3.org/2000/svg&quot; </span><span class="s1">width=</span><span class="s2">&quot;125&quot; </span><span class="s1">height=</span><span class="s2">&quot;170&quot;</span><span class="s1">&gt; \</span>
+    <span class="s1">&lt;path d=</span><span class="s2">&quot;M10.101 57.059L63.019 4.142l52.917 52.917&quot; </span><span class="s1">style=</span><span class="s2">&quot;opacity:.75;&quot;</span><span class="s1">/&gt; \</span>
+    <span class="s1">&lt;path d=</span><span class="s2">&quot;M10.101 86.392l52.917 52.917 52.917-52.917&quot; </span><span class="s1">style=</span><span class="s2">&quot;opacity:.35;&quot;</span><span class="s1">/&gt;&lt;/svg&gt;</span><span class="s2">');</span>
+
+<span class="s1">}</span>
+<span class="s1">.table-header[onclick].sort-desc::after {</span>
+    <span class="s1">background-image:url(</span><span class="s2">'data:image/svg+xml; utf8, \</span>
+    <span class="s1">&lt;svg xmlns=</span><span class="s2">&quot;http://www.w3.org/2000/svg&quot; </span><span class="s1">width=</span><span class="s2">&quot;125&quot; </span><span class="s1">height=</span><span class="s2">&quot;170&quot;</span><span class="s1">&gt; \</span>
+    <span class="s1">&lt;path d=</span><span class="s2">&quot;M10.101 57.059L63.019 4.142l52.917 52.917&quot; </span><span class="s1">style=</span><span class="s2">&quot;opacity:.35;&quot;</span><span class="s1">/&gt; \</span>
+    <span class="s1">&lt;path d=</span><span class="s2">&quot;M10.101 86.392l52.917 52.917 52.917-52.917&quot; </span><span class="s1">style=</span><span class="s2">&quot;opacity:.75;&quot;</span><span class="s1">/&gt;&lt;/svg&gt;</span><span class="s2">');</span>
+<span class="s1">}</span>
+<span class="s1">.col-first, .col-first {</span>
+    <span class="s1">font-size:</span><span class="s3">0</span><span class="s1">.</span><span class="s3">93</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">.col-second, .col-second, .col-last, .col-constructor-name, .col-summary-item-name, .col-last {</span>
+    <span class="s1">font-size:</span><span class="s3">0</span><span class="s1">.</span><span class="s3">93</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">.col-first, .col-second, .col-constructor-name {</span>
+    <span class="s1">vertical-align:top;</span>
+    <span class="s1">overflow: auto;</span>
+<span class="s1">}</span>
+<span class="s1">.col-last {</span>
+    <span class="s1">white-space:normal;</span>
+<span class="s1">}</span>
+<span class="s1">.col-first a:link, .col-first a:visited,</span>
+<span class="s1">.col-second a:link, .col-second a:visited,</span>
+<span class="s1">.col-first a:link, .col-first a:visited,</span>
+<span class="s1">.col-second a:link, .col-second a:visited,</span>
+<span class="s1">.col-constructor-name a:link, .col-constructor-name a:visited,</span>
+<span class="s1">.col-summary-item-name a:link, .col-summary-item-name a:visited {</span>
+    <span class="s1">font-weight:bold;</span>
+<span class="s1">}</span>
+<span class="s1">.even-row-color, .even-row-color .table-header {</span>
+    <span class="s1">background-color:var(--even-row-color);</span>
+<span class="s1">}</span>
+<span class="s1">.odd-row-color, .odd-row-color .table-header {</span>
+    <span class="s1">background-color:var(--odd-row-color);</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for contents. 
+ */</span>
+<span class="s1">div.block {</span>
+    <span class="s1">font-size:var(--body-font-size);</span>
+    <span class="s1">font-family:var(--block-font-family);</span>
+<span class="s1">}</span>
+<span class="s1">.col-last div {</span>
+    <span class="s1">padding-top:</span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">.col-last a {</span>
+    <span class="s1">padding-bottom:</span><span class="s3">3</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">.module-signature,</span>
+<span class="s1">.package-signature,</span>
+<span class="s1">.type-signature,</span>
+<span class="s1">.member-signature {</span>
+    <span class="s1">font-family:var(--code-font-family);</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">em;</span>
+    <span class="s1">margin:</span><span class="s3">14</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">white-space: pre-wrap;</span>
+<span class="s1">}</span>
+<span class="s1">.module-signature,</span>
+<span class="s1">.package-signature,</span>
+<span class="s1">.type-signature {</span>
+    <span class="s1">margin-top: </span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">.member-signature .type-parameters-long,</span>
+<span class="s1">.member-signature .parameters,</span>
+<span class="s1">.member-signature .exceptions {</span>
+    <span class="s1">display: inline-block;</span>
+    <span class="s1">vertical-align: top;</span>
+    <span class="s1">white-space: pre;</span>
+<span class="s1">}</span>
+<span class="s1">.member-signature .type-parameters {</span>
+    <span class="s1">white-space: normal;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for formatting effect. 
+ */</span>
+<span class="s1">.source-line-no {</span>
+    <span class="s0">/* Color of line numbers in source pages can be set via custom property below */</span>
+    <span class="s1">color:var(--source-linenumber-color, green);</span>
+    <span class="s1">padding:</span><span class="s3">0 30</span><span class="s1">px </span><span class="s3">0 0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">.block {</span>
+    <span class="s1">display:block;</span>
+    <span class="s1">margin:</span><span class="s3">0 10</span><span class="s1">px </span><span class="s3">5</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">color:var(--block-text-color);</span>
+<span class="s1">}</span>
+<span class="s1">.deprecated-label, .description-from-type-label, .implementation-label, .member-name-link,</span>
+<span class="s1">.module-label-in-package, .module-label-in-type, .package-label-in-type,</span>
+<span class="s1">.package-hierarchy-label, .type-name-label, .type-name-link, .search-tag-link, .preview-label {</span>
+    <span class="s1">font-weight:bold;</span>
+<span class="s1">}</span>
+<span class="s1">.deprecation-comment, .help-footnote, .preview-comment {</span>
+    <span class="s1">font-style:italic;</span>
+<span class="s1">}</span>
+<span class="s1">.deprecation-block {</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">em;</span>
+    <span class="s1">font-family:var(--block-font-family);</span>
+    <span class="s1">border-style:solid;</span>
+    <span class="s1">border-width:thin;</span>
+    <span class="s1">border-radius:</span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">padding:</span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">margin-bottom:</span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">margin-right:</span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">display:inline-block;</span>
+<span class="s1">}</span>
+<span class="s1">.preview-block {</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">em;</span>
+    <span class="s1">font-family:var(--block-font-family);</span>
+    <span class="s1">border-style:solid;</span>
+    <span class="s1">border-width:thin;</span>
+    <span class="s1">border-radius:</span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">padding:</span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">margin-bottom:</span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">margin-right:</span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">display:inline-block;</span>
+<span class="s1">}</span>
+<span class="s1">div.block div.deprecation-comment {</span>
+    <span class="s1">font-style:normal;</span>
+<span class="s1">}</span>
+<span class="s1">details.invalid-tag, span.invalid-tag {</span>
+    <span class="s1">font-size:</span><span class="s3">1</span><span class="s1">em;</span>
+    <span class="s1">font-family:var(--block-font-family);</span>
+    <span class="s1">color: var(--invalid-tag-text-color);</span>
+    <span class="s1">background: var(--invalid-tag-background-color);</span>
+    <span class="s1">border: thin solid var(--table-border-color);</span>
+    <span class="s1">border-radius:</span><span class="s3">2</span><span class="s1">px;</span>
+    <span class="s1">padding: </span><span class="s3">2</span><span class="s1">px </span><span class="s3">4</span><span class="s1">px;</span>
+    <span class="s1">display:inline-block;</span>
+<span class="s1">}</span>
+<span class="s1">details summary {</span>
+    <span class="s1">cursor: pointer;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles specific to HTML5 elements. 
+ */</span>
+<span class="s1">main, nav, header, footer, section {</span>
+    <span class="s1">display:block;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for javadoc search. 
+ */</span>
+<span class="s1">.ui-state-active {</span>
+    <span class="s0">/* Overrides the color of selection used in jQuery UI */</span>
+    <span class="s1">background: var(--selected-background-color);</span>
+    <span class="s1">border: </span><span class="s3">1</span><span class="s1">px solid var(--selected-background-color);</span>
+    <span class="s1">color: var(--selected-text-color);</span>
+<span class="s1">}</span>
+<span class="s1">.ui-autocomplete-category {</span>
+    <span class="s1">font-weight:bold;</span>
+    <span class="s1">font-size:</span><span class="s3">15</span><span class="s1">px;</span>
+    <span class="s1">padding:</span><span class="s3">7</span><span class="s1">px </span><span class="s3">0 7</span><span class="s1">px </span><span class="s3">3</span><span class="s1">px;</span>
+    <span class="s1">background-color:var(--navbar-background-color);</span>
+    <span class="s1">color:var(--navbar-text-color);</span>
+<span class="s1">}</span>
+<span class="s1">.ui-autocomplete {</span>
+    <span class="s1">max-height:</span><span class="s3">85</span><span class="s1">%;</span>
+    <span class="s1">max-width:</span><span class="s3">65</span><span class="s1">%;</span>
+    <span class="s1">overflow-y:auto;</span>
+    <span class="s1">overflow-x:auto;</span>
+    <span class="s1">scrollbar-width: thin;</span>
+    <span class="s1">white-space:nowrap;</span>
+    <span class="s1">box-shadow: </span><span class="s3">0 3</span><span class="s1">px </span><span class="s3">6</span><span class="s1">px rgba(</span><span class="s3">0</span><span class="s1">,</span><span class="s3">0</span><span class="s1">,</span><span class="s3">0</span><span class="s1">,</span><span class="s3">0.16</span><span class="s1">), </span><span class="s3">0 3</span><span class="s1">px </span><span class="s3">6</span><span class="s1">px rgba(</span><span class="s3">0</span><span class="s1">,</span><span class="s3">0</span><span class="s1">,</span><span class="s3">0</span><span class="s1">,</span><span class="s3">0.23</span><span class="s1">);</span>
+<span class="s1">}</span>
+<span class="s1">ul.ui-autocomplete {</span>
+    <span class="s1">position:fixed;</span>
+    <span class="s1">z-index:</span><span class="s3">1</span><span class="s1">;</span>
+    <span class="s1">background-color: var(--body-background-color);</span>
+<span class="s1">}</span>
+<span class="s1">ul.ui-autocomplete li {</span>
+    <span class="s1">float:left;</span>
+    <span class="s1">clear:both;</span>
+    <span class="s1">min-width:</span><span class="s3">100</span><span class="s1">%;</span>
+<span class="s1">}</span>
+<span class="s1">ul.ui-autocomplete li.ui-static-link {</span>
+    <span class="s1">position:sticky;</span>
+    <span class="s1">bottom:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">left:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">background: var(--subnav-background-color);</span>
+    <span class="s1">padding: </span><span class="s3">5</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">font-family: var(--body-font-family);</span>
+    <span class="s1">font-size: </span><span class="s3">0</span><span class="s1">.</span><span class="s3">93</span><span class="s1">em;</span>
+    <span class="s1">font-weight: bolder;</span>
+    <span class="s1">z-index: </span><span class="s3">2</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">li.ui-static-link a, li.ui-static-link a:visited {</span>
+    <span class="s1">text-decoration:none;</span>
+    <span class="s1">color:var(--link-color);</span>
+    <span class="s1">float:right;</span>
+    <span class="s1">margin-right:</span><span class="s3">20</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">.ui-autocomplete .result-item {</span>
+    <span class="s1">font-size: inherit;</span>
+<span class="s1">}</span>
+<span class="s1">.ui-autocomplete .result-highlight {</span>
+    <span class="s1">font-weight:bold;</span>
+<span class="s1">}</span>
+<span class="s1">#search-input, #page-search-input {</span>
+    <span class="s1">background-image:url(</span><span class="s2">'resources/glass.png'</span><span class="s1">);</span>
+    <span class="s1">background-size:</span><span class="s3">13</span><span class="s1">px;</span>
+    <span class="s1">background-repeat:no-repeat;</span>
+    <span class="s1">background-position:</span><span class="s3">2</span><span class="s1">px </span><span class="s3">3</span><span class="s1">px;</span>
+    <span class="s1">background-color: var(--search-input-background-color);</span>
+    <span class="s1">color: var(--search-input-text-color);</span>
+    <span class="s1">border-color: var(--border-color);</span>
+    <span class="s1">padding-left:</span><span class="s3">20</span><span class="s1">px;</span>
+    <span class="s1">width: </span><span class="s3">250</span><span class="s1">px;</span>
+    <span class="s1">margin: </span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">#search-input {</span>
+    <span class="s1">margin-left: </span><span class="s3">4</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">#reset-button {</span>
+    <span class="s1">background-color: transparent;</span>
+    <span class="s1">background-image:url(</span><span class="s2">'resources/x.png'</span><span class="s1">);</span>
+    <span class="s1">background-repeat:no-repeat;</span>
+    <span class="s1">background-size:contain;</span>
+    <span class="s1">border:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">border-radius:</span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">width:</span><span class="s3">12</span><span class="s1">px;</span>
+    <span class="s1">height:</span><span class="s3">12</span><span class="s1">px;</span>
+    <span class="s1">position:absolute;</span>
+    <span class="s1">right:</span><span class="s3">12</span><span class="s1">px;</span>
+    <span class="s1">top:</span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">font-size:</span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">::placeholder {</span>
+    <span class="s1">color:var(--search-input-placeholder-color);</span>
+    <span class="s1">opacity: </span><span class="s3">1</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">.search-tag-desc-result {</span>
+    <span class="s1">font-style:italic;</span>
+    <span class="s1">font-size:</span><span class="s3">11</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">.search-tag-holder-result {</span>
+    <span class="s1">font-style:italic;</span>
+    <span class="s1">font-size:</span><span class="s3">12</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">.search-tag-result:target {</span>
+    <span class="s1">background-color:var(--search-tag-highlight-color);</span>
+<span class="s1">}</span>
+<span class="s1">details.page-search-details {</span>
+    <span class="s1">display: inline-block;</span>
+<span class="s1">}</span>
+<span class="s1">div#result-container {</span>
+    <span class="s1">font-size: </span><span class="s3">1</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">div#result-container a.search-result-link {</span>
+    <span class="s1">padding: </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">margin: </span><span class="s3">4</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">width: </span><span class="s3">100</span><span class="s1">%;</span>
+<span class="s1">}</span>
+<span class="s1">#result-container .result-highlight {</span>
+    <span class="s1">font-weight:bolder;</span>
+<span class="s1">}</span>
+<span class="s1">.page-search-info {</span>
+    <span class="s1">background-color: var(--subnav-background-color);</span>
+    <span class="s1">border-radius: </span><span class="s3">3</span><span class="s1">px;</span>
+    <span class="s1">border: </span><span class="s3">0 </span><span class="s1">solid var(--border-color);</span>
+    <span class="s1">padding: </span><span class="s3">0 8</span><span class="s1">px;</span>
+    <span class="s1">overflow: hidden;</span>
+    <span class="s1">height: </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">transition: all </span><span class="s3">0</span><span class="s1">.</span><span class="s3">2</span><span class="s1">s ease;</span>
+<span class="s1">}</span>
+<span class="s1">div.table-tabs &gt; button.table-tab {</span>
+    <span class="s1">background: var(--navbar-background-color);</span>
+    <span class="s1">color: var(--navbar-text-color);</span>
+<span class="s1">}</span>
+<span class="s1">.page-search-header {</span>
+    <span class="s1">padding: </span><span class="s3">5</span><span class="s1">px </span><span class="s3">12</span><span class="s1">px </span><span class="s3">7</span><span class="s1">px </span><span class="s3">12</span><span class="s1">px;</span>
+    <span class="s1">font-weight: bold;</span>
+    <span class="s1">margin-right: </span><span class="s3">3</span><span class="s1">px;</span>
+    <span class="s1">background-color:var(--navbar-background-color);</span>
+    <span class="s1">color:var(--navbar-text-color);</span>
+    <span class="s1">display: inline-block;</span>
+<span class="s1">}</span>
+<span class="s1">button.page-search-header {</span>
+    <span class="s1">border: none;</span>
+    <span class="s1">cursor: pointer;</span>
+<span class="s1">}</span>
+<span class="s1">span#page-search-link {</span>
+    <span class="s1">text-decoration: underline;</span>
+<span class="s1">}</span>
+<span class="s1">.module-graph span, .sealed-graph span {</span>
+    <span class="s1">display:none;</span>
+    <span class="s1">position:absolute;</span>
+<span class="s1">}</span>
+<span class="s1">.module-graph:hover span, .sealed-graph:hover span {</span>
+    <span class="s1">display:block;</span>
+    <span class="s1">margin: -</span><span class="s3">100</span><span class="s1">px </span><span class="s3">0 0 100</span><span class="s1">px;</span>
+    <span class="s1">z-index: </span><span class="s3">1</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">.inherited-list {</span>
+    <span class="s1">margin: </span><span class="s3">10</span><span class="s1">px </span><span class="s3">0 10</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">section.class-description {</span>
+    <span class="s1">line-height: </span><span class="s3">1.4</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">.summary section[class$=</span><span class="s2">&quot;-summary&quot;</span><span class="s1">], .details section[class$=</span><span class="s2">&quot;-details&quot;</span><span class="s1">],</span>
+<span class="s1">.class-uses .detail, .serialized-class-details {</span>
+    <span class="s1">padding: </span><span class="s3">0 20</span><span class="s1">px </span><span class="s3">5</span><span class="s1">px </span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">border: </span><span class="s3">1</span><span class="s1">px solid var(--border-color);</span>
+    <span class="s1">background-color: var(--section-background-color);</span>
+<span class="s1">}</span>
+<span class="s1">.inherited-list, section[class$=</span><span class="s2">&quot;-details&quot;</span><span class="s1">] .detail {</span>
+    <span class="s1">padding:</span><span class="s3">0 0 5</span><span class="s1">px </span><span class="s3">8</span><span class="s1">px;</span>
+    <span class="s1">background-color:var(--detail-background-color);</span>
+    <span class="s1">border:none;</span>
+<span class="s1">}</span>
+<span class="s1">.vertical-separator {</span>
+    <span class="s1">padding: </span><span class="s3">0 5</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">ul.help-section-list {</span>
+    <span class="s1">margin: </span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">ul.help-subtoc &gt; li {</span>
+  <span class="s1">display: inline-block;</span>
+  <span class="s1">padding-right: </span><span class="s3">5</span><span class="s1">px;</span>
+  <span class="s1">font-size: smaller;</span>
+<span class="s1">}</span>
+<span class="s1">ul.help-subtoc &gt; li::before {</span>
+  <span class="s1">content: </span><span class="s2">&quot;\2022&quot; </span><span class="s1">;</span>
+  <span class="s1">padding-right:</span><span class="s3">2</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">.help-note {</span>
+    <span class="s1">font-style: italic;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Indicator icon for external links. 
+ */</span>
+<span class="s1">main a[href*=</span><span class="s2">&quot;://&quot;</span><span class="s1">]::after {</span>
+    <span class="s1">content:</span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+    <span class="s1">display:inline-block;</span>
+    <span class="s1">background-image:url(</span><span class="s2">'data:image/svg+xml; utf8, \</span>
+      <span class="s1">&lt;svg xmlns=</span><span class="s2">&quot;http://www.w3.org/2000/svg&quot; </span><span class="s1">width=</span><span class="s2">&quot;768&quot; </span><span class="s1">height=</span><span class="s2">&quot;768&quot;</span><span class="s1">&gt;\</span>
+        <span class="s1">&lt;path d=</span><span class="s2">&quot;M584 664H104V184h216V80H0v688h688V448H584zM384 0l132 \</span>
+        <span class="s3">132</span><span class="s1">-</span><span class="s3">240 240 120 120 240</span><span class="s1">-</span><span class="s3">240 132 132</span><span class="s1">V0z</span><span class="s2">&quot; fill=&quot;</span><span class="s1">%</span><span class="s3">234</span><span class="s1">a6782</span><span class="s2">&quot;/&gt;\</span>
+      <span class="s1">&lt;/svg&gt;</span><span class="s2">');</span>
+    <span class="s1">background-size:</span><span class="s3">100</span><span class="s1">% </span><span class="s3">100</span><span class="s1">%;</span>
+    <span class="s1">width:</span><span class="s3">7</span><span class="s1">px;</span>
+    <span class="s1">height:</span><span class="s3">7</span><span class="s1">px;</span>
+    <span class="s1">margin-left:</span><span class="s3">2</span><span class="s1">px;</span>
+    <span class="s1">margin-bottom:</span><span class="s3">4</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">main a[href*=</span><span class="s2">&quot;://&quot;</span><span class="s1">]:hover::after,</span>
+<span class="s1">main a[href*=</span><span class="s2">&quot;://&quot;</span><span class="s1">]:focus::after {</span>
+    <span class="s1">background-image:url(</span><span class="s2">'data:image/svg+xml; utf8, \</span>
+      <span class="s1">&lt;svg xmlns=</span><span class="s2">&quot;http://www.w3.org/2000/svg&quot; </span><span class="s1">width=</span><span class="s2">&quot;768&quot; </span><span class="s1">height=</span><span class="s2">&quot;768&quot;</span><span class="s1">&gt;\</span>
+        <span class="s1">&lt;path d=</span><span class="s2">&quot;M584 664H104V184h216V80H0v688h688V448H584zM384 0l132 \</span>
+        <span class="s3">132</span><span class="s1">-</span><span class="s3">240 240 120 120 240</span><span class="s1">-</span><span class="s3">240 132 132</span><span class="s1">V0z</span><span class="s2">&quot; fill=&quot;</span><span class="s1">%</span><span class="s3">23</span><span class="s1">bb7a2a</span><span class="s2">&quot;/&gt;\</span>
+      <span class="s1">&lt;/svg&gt;</span><span class="s2">');</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for copy-to-clipboard buttons 
+ */</span>
+<span class="s1">button.copy {</span>
+    <span class="s1">opacity: </span><span class="s3">80</span><span class="s1">%;</span>
+    <span class="s1">border: none;</span>
+    <span class="s1">border-radius: </span><span class="s3">3</span><span class="s1">px;</span>
+    <span class="s1">position: relative;</span>
+    <span class="s1">background:none;</span>
+    <span class="s1">transition: opacity </span><span class="s3">0</span><span class="s1">.</span><span class="s3">2</span><span class="s1">s;</span>
+    <span class="s1">cursor: pointer;</span>
+<span class="s1">}</span>
+<span class="s1">button.copy:hover,</span>
+<span class="s1">button.copy:active {</span>
+    <span class="s1">opacity: </span><span class="s3">100</span><span class="s1">%;</span>
+<span class="s1">}</span>
+<span class="s1">button.copy img {</span>
+    <span class="s1">position: relative;</span>
+    <span class="s1">background: none;</span>
+    <span class="s1">filter: brightness(var(--copy-icon-brightness));</span>
+<span class="s1">}</span>
+<span class="s1">button.copy:active {</span>
+    <span class="s1">background-color: var(--copy-button-background-color-active);</span>
+<span class="s1">}</span>
+<span class="s1">button.copy span {</span>
+    <span class="s1">color: var(--body-text-color);</span>
+    <span class="s1">position: relative;</span>
+    <span class="s1">top: -</span><span class="s3">0</span><span class="s1">.</span><span class="s3">1</span><span class="s1">em;</span>
+    <span class="s1">transition: all </span><span class="s3">0</span><span class="s1">.</span><span class="s3">1</span><span class="s1">s;</span>
+    <span class="s1">font-size: </span><span class="s3">0</span><span class="s1">.</span><span class="s3">76</span><span class="s1">rem;</span>
+    <span class="s1">line-height: </span><span class="s3">1</span><span class="s1">.</span><span class="s3">2</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s0">/* header/section copy button */</span>
+<span class="s1">button.copy-header {</span>
+    <span class="s1">margin: </span><span class="s3">0 0</span><span class="s1">.</span><span class="s3">2</span><span class="s1">em;</span>
+    <span class="s1">padding: </span><span class="s3">0 4</span><span class="s1">px;</span>
+    <span class="s1">height: </span><span class="s3">1</span><span class="s1">.</span><span class="s3">16</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">button.copy-header img {</span>
+    <span class="s1">height: </span><span class="s3">0</span><span class="s1">.</span><span class="s3">88</span><span class="s1">em;</span>
+    <span class="s1">top: </span><span class="s3">0</span><span class="s1">.</span><span class="s3">1</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s0">/* search page copy button */</span>
+<span class="s1">button#page-search-copy {</span>
+    <span class="s1">margin-left: </span><span class="s3">0</span><span class="s1">.</span><span class="s3">4</span><span class="s1">em;</span>
+    <span class="s1">padding:</span><span class="s3">0</span><span class="s1">.</span><span class="s3">3</span><span class="s1">em;</span>
+    <span class="s1">top:</span><span class="s3">0</span><span class="s1">.</span><span class="s3">13</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">button#page-search-copy img {</span>
+    <span class="s1">width: </span><span class="s3">1</span><span class="s1">.</span><span class="s3">2</span><span class="s1">em;</span>
+    <span class="s1">height: </span><span class="s3">1</span><span class="s1">.</span><span class="s3">2</span><span class="s1">em;</span>
+    <span class="s1">padding: </span><span class="s3">0</span><span class="s1">.</span><span class="s3">01</span><span class="s1">em </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">top: </span><span class="s3">0</span><span class="s1">.</span><span class="s3">15</span><span class="s1">em;</span>
+<span class="s1">}</span>
+<span class="s1">button#page-search-copy span {</span>
+    <span class="s1">color: var(--body-text-color);</span>
+    <span class="s1">content: attr(aria-label);</span>
+    <span class="s1">line-height: </span><span class="s3">1</span><span class="s1">.</span><span class="s3">2</span><span class="s1">em;</span>
+    <span class="s1">padding: </span><span class="s3">0</span><span class="s1">.</span><span class="s3">2</span><span class="s1">em;</span>
+    <span class="s1">top: -</span><span class="s3">0</span><span class="s1">.</span><span class="s3">18</span><span class="s1">em;</span>
+    <span class="s1">opacity: </span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">div.page-search-info:hover button#page-search-copy,</span>
+<span class="s1">div.page-search-info:hover button#page-search-copy span {</span>
+    <span class="s1">opacity: </span><span class="s3">90</span><span class="s1">%;</span>
+<span class="s1">}</span>
+<span class="s0">/* snippet copy button */</span>
+<span class="s1">button.snippet-copy {</span>
+    <span class="s1">position: absolute;</span>
+    <span class="s1">top: </span><span class="s3">6</span><span class="s1">px;</span>
+    <span class="s1">right: </span><span class="s3">6</span><span class="s1">px;</span>
+    <span class="s1">height: </span><span class="s3">1</span><span class="s1">.</span><span class="s3">7</span><span class="s1">em;</span>
+    <span class="s1">opacity: </span><span class="s3">50</span><span class="s1">%;</span>
+    <span class="s1">padding: </span><span class="s3">2</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">button.snippet-copy img {</span>
+    <span class="s1">width: </span><span class="s3">18</span><span class="s1">px;</span>
+    <span class="s1">height: </span><span class="s3">18</span><span class="s1">px;</span>
+    <span class="s1">padding: </span><span class="s3">0</span><span class="s1">.</span><span class="s3">05</span><span class="s1">em </span><span class="s3">0</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s1">button.snippet-copy span {</span>
+    <span class="s1">content: attr(aria-label);</span>
+    <span class="s1">line-height: </span><span class="s3">1</span><span class="s1">.</span><span class="s3">2</span><span class="s1">em;</span>
+    <span class="s1">padding: </span><span class="s3">0</span><span class="s1">.</span><span class="s3">2</span><span class="s1">em;</span>
+    <span class="s1">position: relative;</span>
+    <span class="s1">top: -</span><span class="s3">0</span><span class="s1">.</span><span class="s3">5</span><span class="s1">em;</span>
+    <span class="s1">display: none;</span>
+<span class="s1">}</span>
+<span class="s1">div.snippet-container:hover button.snippet-copy span {</span>
+    <span class="s1">display: inline;</span>
+<span class="s1">}</span>
+<span class="s1">div.snippet-container:hover button.snippet-copy {</span>
+    <span class="s1">opacity: </span><span class="s3">80</span><span class="s1">%;</span>
+<span class="s1">}</span>
+<span class="s1">div.snippet-container button.snippet-copy:hover {</span>
+    <span class="s1">opacity: </span><span class="s3">100</span><span class="s1">%;</span>
+<span class="s1">}</span>
+<span class="s0">/* 
+ * Styles for user-provided tables. 
+ * 
+ * borderless: 
+ *      No borders, vertical margins, styled caption. 
+ *      This style is provided for use with existing doc comments. 
+ *      In general, borderless tables should not be used for layout purposes. 
+ * 
+ * plain: 
+ *      Plain borders around table and cells, vertical margins, styled caption. 
+ *      Best for small tables or for complex tables for tables with cells that span 
+ *      rows and columns, when the &quot;striped&quot; style does not work well. 
+ * 
+ * striped: 
+ *      Borders around the table and vertical borders between cells, striped rows, 
+ *      vertical margins, styled caption. 
+ *      Best for tables that have a header row, and a body containing a series of simple rows. 
+ */</span>
+
+<span class="s1">table.borderless,</span>
+<span class="s1">table.plain,</span>
+<span class="s1">table.striped {</span>
+    <span class="s1">margin-top: </span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">margin-bottom: </span><span class="s3">10</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">table.borderless &gt; caption,</span>
+<span class="s1">table.plain &gt; caption,</span>
+<span class="s1">table.striped &gt; caption {</span>
+    <span class="s1">font-weight: bold;</span>
+    <span class="s1">font-size: smaller;</span>
+<span class="s1">}</span>
+<span class="s1">table.borderless th, table.borderless td,</span>
+<span class="s1">table.plain th, table.plain td,</span>
+<span class="s1">table.striped th, table.striped td {</span>
+    <span class="s1">padding: </span><span class="s3">2</span><span class="s1">px </span><span class="s3">5</span><span class="s1">px;</span>
+<span class="s1">}</span>
+<span class="s1">table.borderless,</span>
+<span class="s1">table.borderless &gt; thead &gt; tr &gt; th, table.borderless &gt; tbody &gt; tr &gt; th, table.borderless &gt; tr &gt; th,</span>
+<span class="s1">table.borderless &gt; thead &gt; tr &gt; td, table.borderless &gt; tbody &gt; tr &gt; td, table.borderless &gt; tr &gt; td {</span>
+    <span class="s1">border: none;</span>
+<span class="s1">}</span>
+<span class="s1">table.borderless &gt; thead &gt; tr, table.borderless &gt; tbody &gt; tr, table.borderless &gt; tr {</span>
+    <span class="s1">background-color: transparent;</span>
+<span class="s1">}</span>
+<span class="s1">table.plain {</span>
+    <span class="s1">border-collapse: collapse;</span>
+    <span class="s1">border: </span><span class="s3">1</span><span class="s1">px solid var(--table-border-color);</span>
+<span class="s1">}</span>
+<span class="s1">table.plain &gt; thead &gt; tr, table.plain &gt; tbody tr, table.plain &gt; tr {</span>
+    <span class="s1">background-color: transparent;</span>
+<span class="s1">}</span>
+<span class="s1">table.plain &gt; thead &gt; tr &gt; th, table.plain &gt; tbody &gt; tr &gt; th, table.plain &gt; tr &gt; th,</span>
+<span class="s1">table.plain &gt; thead &gt; tr &gt; td, table.plain &gt; tbody &gt; tr &gt; td, table.plain &gt; tr &gt; td {</span>
+    <span class="s1">border: </span><span class="s3">1</span><span class="s1">px solid var(--table-border-color);</span>
+<span class="s1">}</span>
+<span class="s1">table.striped {</span>
+    <span class="s1">border-collapse: collapse;</span>
+    <span class="s1">border: </span><span class="s3">1</span><span class="s1">px solid var(--table-border-color);</span>
+<span class="s1">}</span>
+<span class="s1">table.striped &gt; thead {</span>
+    <span class="s1">background-color: var(--subnav-background-color);</span>
+<span class="s1">}</span>
+<span class="s1">table.striped &gt; thead &gt; tr &gt; th, table.striped &gt; thead &gt; tr &gt; td {</span>
+    <span class="s1">border: </span><span class="s3">1</span><span class="s1">px solid var(--table-border-color);</span>
+<span class="s1">}</span>
+<span class="s1">table.striped &gt; tbody &gt; tr:nth-child(even) {</span>
+    <span class="s1">background-color: var(--odd-row-color)</span>
+<span class="s1">}</span>
+<span class="s1">table.striped &gt; tbody &gt; tr:nth-child(odd) {</span>
+    <span class="s1">background-color: var(--even-row-color)</span>
+<span class="s1">}</span>
+<span class="s1">table.striped &gt; tbody &gt; tr &gt; th, table.striped &gt; tbody &gt; tr &gt; td {</span>
+    <span class="s1">border-left: </span><span class="s3">1</span><span class="s1">px solid var(--table-border-color);</span>
+    <span class="s1">border-right: </span><span class="s3">1</span><span class="s1">px solid var(--table-border-color);</span>
+<span class="s1">}</span>
+<span class="s1">table.striped &gt; tbody &gt; tr &gt; th {</span>
+    <span class="s1">font-weight: normal;</span>
+<span class="s1">}</span>
+<span class="s0">/** 
+ * Tweak style for small screens. 
+ */</span>
+<span class="s1">@media screen and (max-width: </span><span class="s3">920</span><span class="s1">px) {</span>
+    <span class="s1">header.flex-header {</span>
+        <span class="s1">max-height: </span><span class="s3">100</span><span class="s1">vh;</span>
+        <span class="s1">overflow-y: auto;</span>
+    <span class="s1">}</span>
+    <span class="s1">div#navbar-top {</span>
+        <span class="s1">height: </span><span class="s3">2</span><span class="s1">.</span><span class="s3">8</span><span class="s1">em;</span>
+        <span class="s1">transition: height </span><span class="s3">0</span><span class="s1">.</span><span class="s3">35</span><span class="s1">s ease;</span>
+    <span class="s1">}</span>
+    <span class="s1">ul.nav-list {</span>
+        <span class="s1">display: block;</span>
+        <span class="s1">width: </span><span class="s3">40</span><span class="s1">%;</span>
+        <span class="s1">float:left;</span>
+        <span class="s1">clear: left;</span>
+        <span class="s1">margin: </span><span class="s3">10</span><span class="s1">px </span><span class="s3">0 0 0</span><span class="s1">;</span>
+        <span class="s1">padding: </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">}</span>
+    <span class="s1">ul.nav-list li {</span>
+        <span class="s1">float: none;</span>
+        <span class="s1">padding: </span><span class="s3">6</span><span class="s1">px;</span>
+        <span class="s1">margin-left: </span><span class="s3">10</span><span class="s1">px;</span>
+        <span class="s1">margin-top: </span><span class="s3">2</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+    <span class="s1">ul.sub-nav-list-small {</span>
+        <span class="s1">display:block;</span>
+        <span class="s1">height: </span><span class="s3">100</span><span class="s1">%;</span>
+        <span class="s1">width: </span><span class="s3">50</span><span class="s1">%;</span>
+        <span class="s1">float: right;</span>
+        <span class="s1">clear: right;</span>
+        <span class="s1">background-color: var(--subnav-background-color);</span>
+        <span class="s1">color: var(--body-text-color);</span>
+        <span class="s1">margin: </span><span class="s3">6</span><span class="s1">px </span><span class="s3">0 0 0</span><span class="s1">;</span>
+        <span class="s1">padding: </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">}</span>
+    <span class="s1">ul.sub-nav-list-small ul {</span>
+        <span class="s1">padding-left: </span><span class="s3">20</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+    <span class="s1">ul.sub-nav-list-small a:link, ul.sub-nav-list-small a:visited {</span>
+        <span class="s1">color:var(--link-color);</span>
+    <span class="s1">}</span>
+    <span class="s1">ul.sub-nav-list-small a:hover {</span>
+        <span class="s1">color:var(--link-color-active);</span>
+    <span class="s1">}</span>
+    <span class="s1">ul.sub-nav-list-small li {</span>
+        <span class="s1">list-style:none;</span>
+        <span class="s1">float:none;</span>
+        <span class="s1">padding: </span><span class="s3">6</span><span class="s1">px;</span>
+        <span class="s1">margin-top: </span><span class="s3">1</span><span class="s1">px;</span>
+        <span class="s1">text-transform:uppercase;</span>
+    <span class="s1">}</span>
+    <span class="s1">ul.sub-nav-list-small &gt; li {</span>
+        <span class="s1">margin-left: </span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+    <span class="s1">ul.sub-nav-list-small li p {</span>
+        <span class="s1">margin: </span><span class="s3">5</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">}</span>
+    <span class="s1">div#navbar-sub-list {</span>
+        <span class="s1">display: none;</span>
+    <span class="s1">}</span>
+    <span class="s1">.top-nav a:link, .top-nav a:active, .top-nav a:visited {</span>
+        <span class="s1">display: block;</span>
+    <span class="s1">}</span>
+    <span class="s1">button#navbar-toggle-button {</span>
+        <span class="s1">width: </span><span class="s3">3</span><span class="s1">.</span><span class="s3">4</span><span class="s1">em;</span>
+        <span class="s1">height: </span><span class="s3">2</span><span class="s1">.</span><span class="s3">8</span><span class="s1">em;</span>
+        <span class="s1">background-color: transparent;</span>
+        <span class="s1">display: block;</span>
+        <span class="s1">float: left;</span>
+        <span class="s1">border: </span><span class="s3">0</span><span class="s1">;</span>
+        <span class="s1">margin: </span><span class="s3">0 10</span><span class="s1">px;</span>
+        <span class="s1">cursor: pointer;</span>
+        <span class="s1">font-size: </span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+    <span class="s1">button#navbar-toggle-button .nav-bar-toggle-icon {</span>
+        <span class="s1">display: block;</span>
+        <span class="s1">width: </span><span class="s3">24</span><span class="s1">px;</span>
+        <span class="s1">height: </span><span class="s3">3</span><span class="s1">px;</span>
+        <span class="s1">margin: </span><span class="s3">1</span><span class="s1">px </span><span class="s3">0 4</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+        <span class="s1">border-radius: </span><span class="s3">2</span><span class="s1">px;</span>
+        <span class="s1">transition: all </span><span class="s3">0</span><span class="s1">.</span><span class="s3">1</span><span class="s1">s;</span>
+        <span class="s1">background-color: var(--navbar-text-color);</span>
+    <span class="s1">}</span>
+    <span class="s1">button#navbar-toggle-button.expanded span.nav-bar-toggle-icon:nth-child(</span><span class="s3">1</span><span class="s1">) {</span>
+        <span class="s1">transform: rotate(</span><span class="s3">45</span><span class="s1">deg);</span>
+        <span class="s1">transform-origin: </span><span class="s3">10</span><span class="s1">% </span><span class="s3">10</span><span class="s1">%;</span>
+        <span class="s1">width: </span><span class="s3">26</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+    <span class="s1">button#navbar-toggle-button.expanded span.nav-bar-toggle-icon:nth-child(</span><span class="s3">2</span><span class="s1">) {</span>
+        <span class="s1">opacity: </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">}</span>
+    <span class="s1">button#navbar-toggle-button.expanded span.nav-bar-toggle-icon:nth-child(</span><span class="s3">3</span><span class="s1">) {</span>
+        <span class="s1">transform: rotate(-</span><span class="s3">45</span><span class="s1">deg);</span>
+        <span class="s1">transform-origin: </span><span class="s3">10</span><span class="s1">% </span><span class="s3">90</span><span class="s1">%;</span>
+        <span class="s1">width: </span><span class="s3">26</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s1">@media screen and (max-width: </span><span class="s3">800</span><span class="s1">px) {</span>
+    <span class="s1">.about-language {</span>
+        <span class="s1">padding-right: </span><span class="s3">16</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+    <span class="s1">ul.nav-list li {</span>
+        <span class="s1">margin-left: </span><span class="s3">5</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+    <span class="s1">ul.sub-nav-list-small &gt; li {</span>
+        <span class="s1">margin-left: </span><span class="s3">5</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+    <span class="s1">main {</span>
+        <span class="s1">padding: </span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+    <span class="s1">.summary section[class$=</span><span class="s2">&quot;-summary&quot;</span><span class="s1">], .details section[class$=</span><span class="s2">&quot;-details&quot;</span><span class="s1">],</span>
+    <span class="s1">.class-uses .detail, .serialized-class-details {</span>
+        <span class="s1">padding: </span><span class="s3">0 8</span><span class="s1">px </span><span class="s3">5</span><span class="s1">px </span><span class="s3">8</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+    <span class="s1">body {</span>
+        <span class="s1">-webkit-text-size-adjust: none;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s1">@media screen and (max-width: </span><span class="s3">400</span><span class="s1">px) {</span>
+    <span class="s1">.about-language {</span>
+        <span class="s1">font-size: </span><span class="s3">10</span><span class="s1">px;</span>
+        <span class="s1">padding-right: </span><span class="s3">12</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s1">@media screen and (max-width: </span><span class="s3">400</span><span class="s1">px) {</span>
+    <span class="s1">.nav-list-search {</span>
+        <span class="s1">width: </span><span class="s3">94</span><span class="s1">%;</span>
+    <span class="s1">}</span>
+    <span class="s1">#search-input, #page-search-input {</span>
+        <span class="s1">width: </span><span class="s3">70</span><span class="s1">%;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s1">@media screen and (max-width: </span><span class="s3">320</span><span class="s1">px) {</span>
+    <span class="s1">.nav-list-search &gt; label {</span>
+        <span class="s1">display: none;</span>
+    <span class="s1">}</span>
+    <span class="s1">.nav-list-search {</span>
+        <span class="s1">width: </span><span class="s3">90</span><span class="s1">%;</span>
+    <span class="s1">}</span>
+    <span class="s1">#search-input, #page-search-input {</span>
+        <span class="s1">width: </span><span class="s3">80</span><span class="s1">%;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s1">pre.snippet {</span>
+    <span class="s1">background-color: var(--snippet-background-color);</span>
+    <span class="s1">color: var(--snippet-text-color);</span>
+    <span class="s1">padding: </span><span class="s3">10</span><span class="s1">px;</span>
+    <span class="s1">margin: </span><span class="s3">12</span><span class="s1">px </span><span class="s3">0</span><span class="s1">;</span>
+    <span class="s1">overflow: auto;</span>
+    <span class="s1">white-space: pre;</span>
+<span class="s1">}</span>
+<span class="s1">div.snippet-container {</span>
+    <span class="s1">position: relative;</span>
+<span class="s1">}</span>
+<span class="s1">@media screen and (max-width: </span><span class="s3">800</span><span class="s1">px) {</span>
+    <span class="s1">pre.snippet {</span>
+        <span class="s1">padding-top: </span><span class="s3">26</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+    <span class="s1">button.snippet-copy {</span>
+        <span class="s1">top: </span><span class="s3">4</span><span class="s1">px;</span>
+        <span class="s1">right: </span><span class="s3">4</span><span class="s1">px;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s1">pre.snippet .italic {</span>
+    <span class="s1">font-style: italic;</span>
+<span class="s1">}</span>
+<span class="s1">pre.snippet .bold {</span>
+    <span class="s1">font-weight: bold;</span>
+<span class="s1">}</span>
+<span class="s1">pre.snippet .highlighted {</span>
+    <span class="s1">background-color: var(--snippet-highlight-color);</span>
+    <span class="s1">border-radius: </span><span class="s3">10</span><span class="s1">%;</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

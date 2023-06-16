@@ -1,0 +1,480 @@
+<html>
+<head>
+<title>search.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+.s4 { color: #cc7832;}
+.s5 { color: #4646f1;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+search.js</font>
+</center></td></tr></table>
+<pre><span class="s0">/* 
+ * Copyright (c) 2015, 2022, Oracle and/or its affiliates. All rights reserved. 
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. 
+ * 
+ * This code is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License version 2 only, as 
+ * published by the Free Software Foundation.  Oracle designates this 
+ * particular file as subject to the &quot;Classpath&quot; exception as provided 
+ * by Oracle in the LICENSE file that accompanied this code. 
+ * 
+ * This code is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+ * version 2 for more details (a copy is included in the LICENSE file that 
+ * accompanied this code). 
+ * 
+ * You should have received a copy of the GNU General Public License version 
+ * 2 along with this work; if not, write to the Free Software Foundation, 
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA. 
+ * 
+ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA 
+ * or visit www.oracle.com if you need additional information or have any 
+ * questions. 
+ */</span>
+<span class="s2">&quot;use strict&quot;</span><span class="s1">;</span>
+<span class="s1">const messages = {</span>
+    <span class="s1">enterTerm: </span><span class="s2">&quot;Enter a search term&quot;</span><span class="s1">,</span>
+    <span class="s1">noResult: </span><span class="s2">&quot;No results found&quot;</span><span class="s1">,</span>
+    <span class="s1">oneResult: </span><span class="s2">&quot;Found one result&quot;</span><span class="s1">,</span>
+    <span class="s1">manyResults: </span><span class="s2">&quot;Found {0} results&quot;</span><span class="s1">,</span>
+    <span class="s1">loading: </span><span class="s2">&quot;Loading search index...&quot;</span><span class="s1">,</span>
+    <span class="s1">searching: </span><span class="s2">&quot;Searching...&quot;</span><span class="s1">,</span>
+    <span class="s1">redirecting: </span><span class="s2">&quot;Redirecting to first result...&quot;</span><span class="s1">,</span>
+    <span class="s1">copyUrl: </span><span class="s2">&quot;Copy URL&quot;</span><span class="s1">,</span>
+    <span class="s1">urlCopied: </span><span class="s2">&quot;Copied!&quot;</span>
+<span class="s1">}</span>
+<span class="s1">const categories = {</span>
+    <span class="s1">modules: </span><span class="s2">&quot;Modules&quot;</span><span class="s1">,</span>
+    <span class="s1">packages: </span><span class="s2">&quot;Packages&quot;</span><span class="s1">,</span>
+    <span class="s1">types: </span><span class="s2">&quot;Classes and Interfaces&quot;</span><span class="s1">,</span>
+    <span class="s1">members: </span><span class="s2">&quot;Members&quot;</span><span class="s1">,</span>
+    <span class="s1">searchTags: </span><span class="s2">&quot;Search Tags&quot;</span>
+<span class="s1">};</span>
+<span class="s1">const highlight = </span><span class="s2">&quot;&lt;span class='result-highlight'&gt;$&amp;&lt;/span&gt;&quot;</span><span class="s1">;</span>
+<span class="s1">const NO_MATCH = {};</span>
+<span class="s1">const MAX_RESULTS = </span><span class="s3">300</span><span class="s1">;</span>
+<span class="s4">function </span><span class="s1">checkUnnamed(name, separator) {</span>
+    <span class="s4">return </span><span class="s1">name === </span><span class="s2">&quot;&lt;Unnamed&gt;&quot; </span><span class="s1">|| !name ? </span><span class="s2">&quot;&quot; </span><span class="s1">: name + separator;</span>
+<span class="s1">}</span>
+<span class="s4">function </span><span class="s1">escapeHtml(str) {</span>
+    <span class="s4">return </span><span class="s1">str.replace(/&lt;/g, </span><span class="s2">&quot;&amp;lt;&quot;</span><span class="s1">).replace(/&gt;/g, </span><span class="s2">&quot;&amp;gt;&quot;</span><span class="s1">);</span>
+<span class="s1">}</span>
+<span class="s4">function </span><span class="s1">getHighlightedText(str, boundaries, from, to) {</span>
+    <span class="s4">var </span><span class="s1">start = from;</span>
+    <span class="s4">var </span><span class="s1">text = </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+    <span class="s4">for </span><span class="s1">(</span><span class="s4">var </span><span class="s1">i = </span><span class="s3">0</span><span class="s1">; i &lt; boundaries.length; i += </span><span class="s3">2</span><span class="s1">) {</span>
+        <span class="s4">var </span><span class="s1">b0 = boundaries[i];</span>
+        <span class="s4">var </span><span class="s1">b1 = boundaries[i + </span><span class="s3">1</span><span class="s1">];</span>
+        <span class="s4">if </span><span class="s1">(b0 &gt;= to || b1 &lt;= from) {</span>
+            <span class="s4">continue</span><span class="s1">;</span>
+        <span class="s1">}</span>
+        <span class="s1">text += escapeHtml(str.slice(start, Math.max(start, b0)));</span>
+        <span class="s1">text += </span><span class="s2">&quot;&lt;span class='result-highlight'&gt;&quot;</span><span class="s1">;</span>
+        <span class="s1">text += escapeHtml(str.slice(Math.max(start, b0), Math.min(to, b1)));</span>
+        <span class="s1">text += </span><span class="s2">&quot;&lt;/span&gt;&quot;</span><span class="s1">;</span>
+        <span class="s1">start = Math.min(to, b1);</span>
+    <span class="s1">}</span>
+    <span class="s1">text += escapeHtml(str.slice(start, to));</span>
+    <span class="s4">return </span><span class="s1">text;</span>
+<span class="s1">}</span>
+<span class="s4">function </span><span class="s1">getURLPrefix(item, category) {</span>
+    <span class="s4">var </span><span class="s1">urlPrefix = </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+    <span class="s4">var </span><span class="s1">slash = </span><span class="s2">&quot;/&quot;</span><span class="s1">;</span>
+    <span class="s4">if </span><span class="s1">(category === </span><span class="s2">&quot;modules&quot;</span><span class="s1">) {</span>
+        <span class="s4">return </span><span class="s1">item.l + slash;</span>
+    <span class="s1">} </span><span class="s4">else if </span><span class="s1">(category === </span><span class="s2">&quot;packages&quot; </span><span class="s1">&amp;&amp; item.m) {</span>
+        <span class="s4">return </span><span class="s1">item.m + slash;</span>
+    <span class="s1">} </span><span class="s4">else if </span><span class="s1">(category === </span><span class="s2">&quot;types&quot; </span><span class="s1">|| category === </span><span class="s2">&quot;members&quot;</span><span class="s1">) {</span>
+        <span class="s4">if </span><span class="s1">(item.m) {</span>
+            <span class="s1">urlPrefix = item.m + slash;</span>
+        <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+            <span class="s1">$.each(packageSearchIndex, </span><span class="s4">function</span><span class="s1">(index, it) {</span>
+                <span class="s4">if </span><span class="s1">(it.m &amp;&amp; item.p === it.l) {</span>
+                    <span class="s1">urlPrefix = it.m + slash;</span>
+                <span class="s1">}</span>
+            <span class="s1">});</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s4">return </span><span class="s1">urlPrefix;</span>
+<span class="s1">}</span>
+<span class="s4">function </span><span class="s1">getURL(item, category) {</span>
+    <span class="s4">if </span><span class="s1">(item.url) {</span>
+        <span class="s4">return </span><span class="s1">item.url;</span>
+    <span class="s1">}</span>
+    <span class="s4">var </span><span class="s1">url = getURLPrefix(item, category);</span>
+    <span class="s4">if </span><span class="s1">(category === </span><span class="s2">&quot;modules&quot;</span><span class="s1">) {</span>
+        <span class="s1">url += </span><span class="s2">&quot;module-summary.html&quot;</span><span class="s1">;</span>
+    <span class="s1">} </span><span class="s4">else if </span><span class="s1">(category === </span><span class="s2">&quot;packages&quot;</span><span class="s1">) {</span>
+        <span class="s4">if </span><span class="s1">(item.u) {</span>
+            <span class="s1">url = item.u;</span>
+        <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+            <span class="s1">url += item.l.replace(/\./g, </span><span class="s2">'/'</span><span class="s1">) + </span><span class="s2">&quot;/package-summary.html&quot;</span><span class="s1">;</span>
+        <span class="s1">}</span>
+    <span class="s1">} </span><span class="s4">else if </span><span class="s1">(category === </span><span class="s2">&quot;types&quot;</span><span class="s1">) {</span>
+        <span class="s4">if </span><span class="s1">(item.u) {</span>
+            <span class="s1">url = item.u;</span>
+        <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+            <span class="s1">url += checkUnnamed(item.p, </span><span class="s2">&quot;/&quot;</span><span class="s1">).replace(/\./g, </span><span class="s2">'/'</span><span class="s1">) + item.l + </span><span class="s2">&quot;.html&quot;</span><span class="s1">;</span>
+        <span class="s1">}</span>
+    <span class="s1">} </span><span class="s4">else if </span><span class="s1">(category === </span><span class="s2">&quot;members&quot;</span><span class="s1">) {</span>
+        <span class="s1">url += checkUnnamed(item.p, </span><span class="s2">&quot;/&quot;</span><span class="s1">).replace(/\./g, </span><span class="s2">'/'</span><span class="s1">) + item.c + </span><span class="s2">&quot;.html&quot; </span><span class="s1">+ </span><span class="s2">&quot;#&quot;</span><span class="s1">;</span>
+        <span class="s4">if </span><span class="s1">(item.u) {</span>
+            <span class="s1">url += item.u;</span>
+        <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+            <span class="s1">url += item.l;</span>
+        <span class="s1">}</span>
+    <span class="s1">} </span><span class="s4">else if </span><span class="s1">(category === </span><span class="s2">&quot;searchTags&quot;</span><span class="s1">) {</span>
+        <span class="s1">url += item.u;</span>
+    <span class="s1">}</span>
+    <span class="s1">item.url = url;</span>
+    <span class="s4">return </span><span class="s1">url;</span>
+<span class="s1">}</span>
+<span class="s4">function </span><span class="s1">createMatcher(term, camelCase) {</span>
+    <span class="s4">if </span><span class="s1">(camelCase &amp;&amp; !isUpperCase(term)) {</span>
+        <span class="s4">return null</span><span class="s1">;  </span><span class="s0">// no need for camel-case matcher for lower case query</span>
+    <span class="s1">}</span>
+    <span class="s4">var </span><span class="s1">pattern = </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+    <span class="s4">var </span><span class="s1">upperCase = [];</span>
+    <span class="s1">term.trim().split(/\s+/).forEach(</span><span class="s4">function</span><span class="s1">(w, index, array) {</span>
+        <span class="s4">var </span><span class="s1">tokens = w.split(/(?=[A-Z,.()&lt;&gt;?[\/])/);</span>
+        <span class="s4">for </span><span class="s1">(</span><span class="s4">var </span><span class="s1">i = </span><span class="s3">0</span><span class="s1">; i &lt; tokens.length; i++) {</span>
+            <span class="s4">var </span><span class="s1">s = tokens[i];</span>
+            <span class="s0">// ',' and '?' are the only delimiters commonly followed by space in java signatures</span>
+            <span class="s1">pattern += </span><span class="s2">&quot;(&quot; </span><span class="s1">+ $.ui.autocomplete.escapeRegex(s).replace(/[,?]/g, </span><span class="s2">&quot;$&amp;</span><span class="s5">\\</span><span class="s2">s*?&quot;</span><span class="s1">) + </span><span class="s2">&quot;)&quot;</span><span class="s1">;</span>
+            <span class="s1">upperCase.push(</span><span class="s4">false</span><span class="s1">);</span>
+            <span class="s4">var </span><span class="s1">isWordToken =  /\w$/.test(s);</span>
+            <span class="s4">if </span><span class="s1">(isWordToken) {</span>
+                <span class="s4">if </span><span class="s1">(i === tokens.length - </span><span class="s3">1 </span><span class="s1">&amp;&amp; index &lt; array.length - </span><span class="s3">1</span><span class="s1">) {</span>
+                    <span class="s0">// space in query string matches all delimiters</span>
+                    <span class="s1">pattern += </span><span class="s2">&quot;(.*?)&quot;</span><span class="s1">;</span>
+                    <span class="s1">upperCase.push(isUpperCase(s[</span><span class="s3">0</span><span class="s1">]));</span>
+                <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+                    <span class="s4">if </span><span class="s1">(!camelCase &amp;&amp; isUpperCase(s) &amp;&amp; s.length === </span><span class="s3">1</span><span class="s1">) {</span>
+                        <span class="s1">pattern += </span><span class="s2">&quot;()&quot;</span><span class="s1">;</span>
+                    <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+                        <span class="s1">pattern += </span><span class="s2">&quot;([a-z0-9$&lt;&gt;?[</span><span class="s5">\\</span><span class="s2">]]*?)&quot;</span><span class="s1">;</span>
+                    <span class="s1">}</span>
+                    <span class="s1">upperCase.push(isUpperCase(s[</span><span class="s3">0</span><span class="s1">]));</span>
+                <span class="s1">}</span>
+            <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+                <span class="s1">pattern += </span><span class="s2">&quot;()&quot;</span><span class="s1">;</span>
+                <span class="s1">upperCase.push(</span><span class="s4">false</span><span class="s1">);</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+    <span class="s1">});</span>
+    <span class="s4">var </span><span class="s1">re = </span><span class="s4">new </span><span class="s1">RegExp(pattern, </span><span class="s2">&quot;gi&quot;</span><span class="s1">);</span>
+    <span class="s1">re.upperCase = upperCase;</span>
+    <span class="s4">return </span><span class="s1">re;</span>
+<span class="s1">}</span>
+<span class="s4">function </span><span class="s1">findMatch(matcher, input, startOfName, endOfName) {</span>
+    <span class="s4">var </span><span class="s1">from = startOfName;</span>
+    <span class="s1">matcher.lastIndex = from;</span>
+    <span class="s4">var </span><span class="s1">match = matcher.exec(input);</span>
+    <span class="s0">// Expand search area until we get a valid result or reach the beginning of the string</span>
+    <span class="s4">while </span><span class="s1">(!match || match.index + match[</span><span class="s3">0</span><span class="s1">].length &lt; startOfName || endOfName &lt; match.index) {</span>
+        <span class="s4">if </span><span class="s1">(from === </span><span class="s3">0</span><span class="s1">) {</span>
+            <span class="s4">return </span><span class="s1">NO_MATCH;</span>
+        <span class="s1">}</span>
+        <span class="s1">from = input.lastIndexOf(</span><span class="s2">&quot;.&quot;</span><span class="s1">, from - </span><span class="s3">2</span><span class="s1">) + </span><span class="s3">1</span><span class="s1">;</span>
+        <span class="s1">matcher.lastIndex = from;</span>
+        <span class="s1">match = matcher.exec(input);</span>
+    <span class="s1">}</span>
+    <span class="s4">var </span><span class="s1">boundaries = [];</span>
+    <span class="s4">var </span><span class="s1">matchEnd = match.index + match[</span><span class="s3">0</span><span class="s1">].length;</span>
+    <span class="s4">var </span><span class="s1">score = </span><span class="s3">5</span><span class="s1">;</span>
+    <span class="s4">var </span><span class="s1">start = match.index;</span>
+    <span class="s4">var </span><span class="s1">prevEnd = -</span><span class="s3">1</span><span class="s1">;</span>
+    <span class="s4">for </span><span class="s1">(</span><span class="s4">var </span><span class="s1">i = </span><span class="s3">1</span><span class="s1">; i &lt; match.length; i += </span><span class="s3">2</span><span class="s1">) {</span>
+        <span class="s4">var </span><span class="s1">isUpper = isUpperCase(input[start]);</span>
+        <span class="s4">var </span><span class="s1">isMatcherUpper = matcher.upperCase[i];</span>
+        <span class="s0">// capturing groups come in pairs, match and non-match</span>
+        <span class="s1">boundaries.push(start, start + match[i].length);</span>
+        <span class="s0">// make sure groups are anchored on a left word boundary</span>
+        <span class="s4">var </span><span class="s1">prevChar = input[start - </span><span class="s3">1</span><span class="s1">] || </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+        <span class="s4">var </span><span class="s1">nextChar = input[start + </span><span class="s3">1</span><span class="s1">] || </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+        <span class="s4">if </span><span class="s1">(start !== </span><span class="s3">0 </span><span class="s1">&amp;&amp; !/[\W_]/.test(prevChar) &amp;&amp; !/[\W_]/.test(input[start])) {</span>
+            <span class="s4">if </span><span class="s1">(isUpper &amp;&amp; (isLowerCase(prevChar) || isLowerCase(nextChar))) {</span>
+                <span class="s1">score -= </span><span class="s3">0.1</span><span class="s1">;</span>
+            <span class="s1">} </span><span class="s4">else if </span><span class="s1">(isMatcherUpper &amp;&amp; start === prevEnd) {</span>
+                <span class="s1">score -= isUpper ? </span><span class="s3">0.1 </span><span class="s1">: </span><span class="s3">1.0</span><span class="s1">;</span>
+            <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+                <span class="s4">return </span><span class="s1">NO_MATCH;</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+        <span class="s1">prevEnd = start + match[i].length;</span>
+        <span class="s1">start += match[i].length + match[i + </span><span class="s3">1</span><span class="s1">].length;</span>
+
+        <span class="s0">// lower score for parts of the name that are missing</span>
+        <span class="s4">if </span><span class="s1">(match[i + </span><span class="s3">1</span><span class="s1">] &amp;&amp; prevEnd &lt; endOfName) {</span>
+            <span class="s1">score -= rateNoise(match[i + </span><span class="s3">1</span><span class="s1">]);</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s0">// lower score if a type name contains unmatched camel-case parts</span>
+    <span class="s4">if </span><span class="s1">(input[matchEnd - </span><span class="s3">1</span><span class="s1">] !== </span><span class="s2">&quot;.&quot; </span><span class="s1">&amp;&amp; endOfName &gt; matchEnd)</span>
+        <span class="s1">score -= rateNoise(input.slice(matchEnd, endOfName));</span>
+    <span class="s1">score -= rateNoise(input.slice(</span><span class="s3">0</span><span class="s1">, Math.max(startOfName, match.index)));</span>
+
+    <span class="s4">if </span><span class="s1">(score &lt;= </span><span class="s3">0</span><span class="s1">) {</span>
+        <span class="s4">return </span><span class="s1">NO_MATCH;</span>
+    <span class="s1">}</span>
+    <span class="s4">return </span><span class="s1">{</span>
+        <span class="s1">input: input,</span>
+        <span class="s1">score: score,</span>
+        <span class="s1">boundaries: boundaries</span>
+    <span class="s1">};</span>
+<span class="s1">}</span>
+<span class="s4">function </span><span class="s1">isUpperCase(s) {</span>
+    <span class="s4">return </span><span class="s1">s !== s.toLowerCase();</span>
+<span class="s1">}</span>
+<span class="s4">function </span><span class="s1">isLowerCase(s) {</span>
+    <span class="s4">return </span><span class="s1">s !== s.toUpperCase();</span>
+<span class="s1">}</span>
+<span class="s4">function </span><span class="s1">rateNoise(str) {</span>
+    <span class="s4">return </span><span class="s1">(str.match(/([.(])/g) || []).length / </span><span class="s3">5</span>
+         <span class="s1">+ (str.match(/([A-Z]+)/g) || []).length / </span><span class="s3">10</span>
+         <span class="s1">+  str.length / </span><span class="s3">20</span><span class="s1">;</span>
+<span class="s1">}</span>
+<span class="s4">function </span><span class="s1">doSearch(request, response) {</span>
+    <span class="s4">var </span><span class="s1">term = request.term.trim();</span>
+    <span class="s4">var </span><span class="s1">maxResults = request.maxResults || MAX_RESULTS;</span>
+    <span class="s4">if </span><span class="s1">(term.length === </span><span class="s3">0</span><span class="s1">) {</span>
+        <span class="s4">return this</span><span class="s1">.close();</span>
+    <span class="s1">}</span>
+    <span class="s4">var </span><span class="s1">matcher = {</span>
+        <span class="s1">plainMatcher: createMatcher(term, </span><span class="s4">false</span><span class="s1">),</span>
+        <span class="s1">camelCaseMatcher: createMatcher(term, </span><span class="s4">true</span><span class="s1">)</span>
+    <span class="s1">}</span>
+    <span class="s4">var </span><span class="s1">indexLoaded = indexFilesLoaded();</span>
+
+    <span class="s4">function </span><span class="s1">getPrefix(item, category) {</span>
+        <span class="s4">switch </span><span class="s1">(category) {</span>
+            <span class="s4">case </span><span class="s2">&quot;packages&quot;</span><span class="s1">:</span>
+                <span class="s4">return </span><span class="s1">checkUnnamed(item.m, </span><span class="s2">&quot;/&quot;</span><span class="s1">);</span>
+            <span class="s4">case </span><span class="s2">&quot;types&quot;</span><span class="s1">:</span>
+                <span class="s4">return </span><span class="s1">checkUnnamed(item.p, </span><span class="s2">&quot;.&quot;</span><span class="s1">);</span>
+            <span class="s4">case </span><span class="s2">&quot;members&quot;</span><span class="s1">:</span>
+                <span class="s4">return </span><span class="s1">checkUnnamed(item.p, </span><span class="s2">&quot;.&quot;</span><span class="s1">) + item.c + </span><span class="s2">&quot;.&quot;</span><span class="s1">;</span>
+            <span class="s4">default</span><span class="s1">:</span>
+                <span class="s4">return </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s4">function </span><span class="s1">useQualifiedName(category) {</span>
+        <span class="s4">switch </span><span class="s1">(category) {</span>
+            <span class="s4">case </span><span class="s2">&quot;packages&quot;</span><span class="s1">:</span>
+                <span class="s4">return </span><span class="s1">/[\s/]/.test(term);</span>
+            <span class="s4">case </span><span class="s2">&quot;types&quot;</span><span class="s1">:</span>
+            <span class="s4">case </span><span class="s2">&quot;members&quot;</span><span class="s1">:</span>
+                <span class="s4">return </span><span class="s1">/[\s.]/.test(term);</span>
+            <span class="s4">default</span><span class="s1">:</span>
+                <span class="s4">return false</span><span class="s1">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s4">function </span><span class="s1">searchIndex(indexArray, category) {</span>
+        <span class="s4">var </span><span class="s1">matches = [];</span>
+        <span class="s4">if </span><span class="s1">(!indexArray) {</span>
+            <span class="s4">if </span><span class="s1">(!indexLoaded) {</span>
+                <span class="s1">matches.push({ l: messages.loading, category: category });</span>
+            <span class="s1">}</span>
+            <span class="s4">return </span><span class="s1">matches;</span>
+        <span class="s1">}</span>
+        <span class="s1">$.each(indexArray, </span><span class="s4">function </span><span class="s1">(i, item) {</span>
+            <span class="s4">var </span><span class="s1">prefix = getPrefix(item, category);</span>
+            <span class="s4">var </span><span class="s1">simpleName = item.l;</span>
+            <span class="s4">var </span><span class="s1">qualifiedName = prefix + simpleName;</span>
+            <span class="s4">var </span><span class="s1">useQualified = useQualifiedName(category);</span>
+            <span class="s4">var </span><span class="s1">input = useQualified ? qualifiedName : simpleName;</span>
+            <span class="s4">var </span><span class="s1">startOfName = useQualified ? prefix.length : </span><span class="s3">0</span><span class="s1">;</span>
+            <span class="s4">var </span><span class="s1">endOfName = category === </span><span class="s2">&quot;members&quot; </span><span class="s1">&amp;&amp; input.indexOf(</span><span class="s2">&quot;(&quot;</span><span class="s1">, startOfName) &gt; -</span><span class="s3">1</span>
+                <span class="s1">? input.indexOf(</span><span class="s2">&quot;(&quot;</span><span class="s1">, startOfName) : input.length;</span>
+            <span class="s4">var </span><span class="s1">m = findMatch(matcher.plainMatcher, input, startOfName, endOfName);</span>
+            <span class="s4">if </span><span class="s1">(m === NO_MATCH &amp;&amp; matcher.camelCaseMatcher) {</span>
+                <span class="s1">m = findMatch(matcher.camelCaseMatcher, input, startOfName, endOfName);</span>
+            <span class="s1">}</span>
+            <span class="s4">if </span><span class="s1">(m !== NO_MATCH) {</span>
+                <span class="s1">m.indexItem = item;</span>
+                <span class="s1">m.prefix = prefix;</span>
+                <span class="s1">m.category = category;</span>
+                <span class="s4">if </span><span class="s1">(!useQualified) {</span>
+                    <span class="s1">m.input = qualifiedName;</span>
+                    <span class="s1">m.boundaries = m.boundaries.map(</span><span class="s4">function</span><span class="s1">(b) {</span>
+                        <span class="s4">return </span><span class="s1">b + prefix.length;</span>
+                    <span class="s1">});</span>
+                <span class="s1">}</span>
+                <span class="s1">matches.push(m);</span>
+            <span class="s1">}</span>
+            <span class="s4">return true</span><span class="s1">;</span>
+        <span class="s1">});</span>
+        <span class="s4">return </span><span class="s1">matches.sort(</span><span class="s4">function</span><span class="s1">(e1, e2) {</span>
+            <span class="s4">return </span><span class="s1">e2.score - e1.score;</span>
+        <span class="s1">}).slice(</span><span class="s3">0</span><span class="s1">, maxResults);</span>
+    <span class="s1">}</span>
+
+    <span class="s4">var </span><span class="s1">result = searchIndex(moduleSearchIndex, </span><span class="s2">&quot;modules&quot;</span><span class="s1">)</span>
+         <span class="s1">.concat(searchIndex(packageSearchIndex, </span><span class="s2">&quot;packages&quot;</span><span class="s1">))</span>
+         <span class="s1">.concat(searchIndex(typeSearchIndex, </span><span class="s2">&quot;types&quot;</span><span class="s1">))</span>
+         <span class="s1">.concat(searchIndex(memberSearchIndex, </span><span class="s2">&quot;members&quot;</span><span class="s1">))</span>
+         <span class="s1">.concat(searchIndex(tagSearchIndex, </span><span class="s2">&quot;searchTags&quot;</span><span class="s1">));</span>
+
+    <span class="s4">if </span><span class="s1">(!indexLoaded) {</span>
+        <span class="s1">updateSearchResults = </span><span class="s4">function</span><span class="s1">() {</span>
+            <span class="s1">doSearch(request, response);</span>
+        <span class="s1">}</span>
+    <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+        <span class="s1">updateSearchResults = </span><span class="s4">function</span><span class="s1">() {};</span>
+    <span class="s1">}</span>
+    <span class="s1">response(result);</span>
+<span class="s1">}</span>
+<span class="s0">// JQuery search menu implementation</span>
+<span class="s1">$.widget(</span><span class="s2">&quot;custom.catcomplete&quot;</span><span class="s1">, $.ui.autocomplete, {</span>
+    <span class="s1">_create: </span><span class="s4">function</span><span class="s1">() {</span>
+        <span class="s4">this</span><span class="s1">._super();</span>
+        <span class="s4">this</span><span class="s1">.widget().menu(</span><span class="s2">&quot;option&quot;</span><span class="s1">, </span><span class="s2">&quot;items&quot;</span><span class="s1">, </span><span class="s2">&quot;&gt; .result-item&quot;</span><span class="s1">);</span>
+        <span class="s0">// workaround for search result scrolling</span>
+        <span class="s4">this</span><span class="s1">.menu._scrollIntoView = </span><span class="s4">function </span><span class="s1">_scrollIntoView( item ) {</span>
+            <span class="s4">var </span><span class="s1">borderTop, paddingTop, offset, scroll, elementHeight, itemHeight;</span>
+            <span class="s4">if </span><span class="s1">( </span><span class="s4">this</span><span class="s1">._hasScroll() ) {</span>
+                <span class="s1">borderTop = parseFloat( $.css( </span><span class="s4">this</span><span class="s1">.activeMenu[ </span><span class="s3">0 </span><span class="s1">], </span><span class="s2">&quot;borderTopWidth&quot; </span><span class="s1">) ) || </span><span class="s3">0</span><span class="s1">;</span>
+                <span class="s1">paddingTop = parseFloat( $.css( </span><span class="s4">this</span><span class="s1">.activeMenu[ </span><span class="s3">0 </span><span class="s1">], </span><span class="s2">&quot;paddingTop&quot; </span><span class="s1">) ) || </span><span class="s3">0</span><span class="s1">;</span>
+                <span class="s1">offset = item.offset().top - </span><span class="s4">this</span><span class="s1">.activeMenu.offset().top - borderTop - paddingTop;</span>
+                <span class="s1">scroll = </span><span class="s4">this</span><span class="s1">.activeMenu.scrollTop();</span>
+                <span class="s1">elementHeight = </span><span class="s4">this</span><span class="s1">.activeMenu.height() - </span><span class="s3">26</span><span class="s1">;</span>
+                <span class="s1">itemHeight = item.outerHeight();</span>
+
+                <span class="s4">if </span><span class="s1">( offset &lt; </span><span class="s3">0 </span><span class="s1">) {</span>
+                    <span class="s4">this</span><span class="s1">.activeMenu.scrollTop( scroll + offset );</span>
+                <span class="s1">} </span><span class="s4">else if </span><span class="s1">( offset + itemHeight &gt; elementHeight ) {</span>
+                    <span class="s4">this</span><span class="s1">.activeMenu.scrollTop( scroll + offset - elementHeight + itemHeight );</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+        <span class="s1">};</span>
+    <span class="s1">},</span>
+    <span class="s1">_renderMenu: </span><span class="s4">function</span><span class="s1">(ul, items) {</span>
+        <span class="s4">var </span><span class="s1">currentCategory = </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+        <span class="s4">var </span><span class="s1">widget = </span><span class="s4">this</span><span class="s1">;</span>
+        <span class="s1">widget.menu.bindings = $();</span>
+        <span class="s1">$.each(items, </span><span class="s4">function</span><span class="s1">(index, item) {</span>
+            <span class="s4">if </span><span class="s1">(item.category &amp;&amp; item.category !== currentCategory) {</span>
+                <span class="s1">ul.append(</span><span class="s2">&quot;&lt;li class='ui-autocomplete-category'&gt;&quot; </span><span class="s1">+ categories[item.category] + </span><span class="s2">&quot;&lt;/li&gt;&quot;</span><span class="s1">);</span>
+                <span class="s1">currentCategory = item.category;</span>
+            <span class="s1">}</span>
+            <span class="s4">var </span><span class="s1">li = widget._renderItemData(ul, item);</span>
+            <span class="s4">if </span><span class="s1">(item.category) {</span>
+                <span class="s1">li.attr(</span><span class="s2">&quot;aria-label&quot;</span><span class="s1">, categories[item.category] + </span><span class="s2">&quot; : &quot; </span><span class="s1">+ item.l);</span>
+            <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+                <span class="s1">li.attr(</span><span class="s2">&quot;aria-label&quot;</span><span class="s1">, item.l);</span>
+            <span class="s1">}</span>
+            <span class="s1">li.attr(</span><span class="s2">&quot;class&quot;</span><span class="s1">, </span><span class="s2">&quot;result-item&quot;</span><span class="s1">);</span>
+        <span class="s1">});</span>
+        <span class="s1">ul.append(</span><span class="s2">&quot;&lt;li class='ui-static-link'&gt;&lt;a href='&quot; </span><span class="s1">+ pathtoroot + </span><span class="s2">&quot;search.html?q=&quot;</span>
+            <span class="s1">+ encodeURI(widget.term) + </span><span class="s2">&quot;'&gt;Go to search page&lt;/a&gt;&lt;/li&gt;&quot;</span><span class="s1">);</span>
+    <span class="s1">},</span>
+    <span class="s1">_renderItem: </span><span class="s4">function</span><span class="s1">(ul, item) {</span>
+        <span class="s4">var </span><span class="s1">li = $(</span><span class="s2">&quot;&lt;li/&gt;&quot;</span><span class="s1">).appendTo(ul);</span>
+        <span class="s4">var </span><span class="s1">div = $(</span><span class="s2">&quot;&lt;div/&gt;&quot;</span><span class="s1">).appendTo(li);</span>
+        <span class="s4">var </span><span class="s1">label = item.l</span>
+            <span class="s1">? item.l</span>
+            <span class="s1">: getHighlightedText(item.input, item.boundaries, </span><span class="s3">0</span><span class="s1">, item.input.length);</span>
+        <span class="s4">var </span><span class="s1">idx = item.indexItem;</span>
+        <span class="s4">if </span><span class="s1">(item.category === </span><span class="s2">&quot;searchTags&quot; </span><span class="s1">&amp;&amp; idx.h) {</span>
+            <span class="s4">if </span><span class="s1">(idx.d) {</span>
+                <span class="s1">div.html(label + </span><span class="s2">&quot;&lt;span class='search-tag-holder-result'&gt; (&quot; </span><span class="s1">+ idx.h + </span><span class="s2">&quot;)&lt;/span&gt;&lt;br&gt;&lt;span class='search-tag-desc-result'&gt;&quot;</span>
+                    <span class="s1">+ idx.d + </span><span class="s2">&quot;&lt;/span&gt;&lt;br&gt;&quot;</span><span class="s1">);</span>
+            <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+                <span class="s1">div.html(label + </span><span class="s2">&quot;&lt;span class='search-tag-holder-result'&gt; (&quot; </span><span class="s1">+ idx.h + </span><span class="s2">&quot;)&lt;/span&gt;&quot;</span><span class="s1">);</span>
+            <span class="s1">}</span>
+        <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+            <span class="s1">div.html(label);</span>
+        <span class="s1">}</span>
+        <span class="s4">return </span><span class="s1">li;</span>
+    <span class="s1">}</span>
+<span class="s1">});</span>
+<span class="s1">$(</span><span class="s4">function</span><span class="s1">() {</span>
+    <span class="s4">var </span><span class="s1">expanded = </span><span class="s4">false</span><span class="s1">;</span>
+    <span class="s4">var </span><span class="s1">windowWidth;</span>
+    <span class="s4">function </span><span class="s1">collapse() {</span>
+        <span class="s4">if </span><span class="s1">(expanded) {</span>
+            <span class="s1">$(</span><span class="s2">&quot;div#navbar-top&quot;</span><span class="s1">).removeAttr(</span><span class="s2">&quot;style&quot;</span><span class="s1">);</span>
+            <span class="s1">$(</span><span class="s2">&quot;button#navbar-toggle-button&quot;</span><span class="s1">)</span>
+                <span class="s1">.removeClass(</span><span class="s2">&quot;expanded&quot;</span><span class="s1">)</span>
+                <span class="s1">.attr(</span><span class="s2">&quot;aria-expanded&quot;</span><span class="s1">, </span><span class="s2">&quot;false&quot;</span><span class="s1">);</span>
+            <span class="s1">expanded = </span><span class="s4">false</span><span class="s1">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s1">$(</span><span class="s2">&quot;button#navbar-toggle-button&quot;</span><span class="s1">).click(</span><span class="s4">function </span><span class="s1">(e) {</span>
+        <span class="s4">if </span><span class="s1">(expanded) {</span>
+            <span class="s1">collapse();</span>
+        <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+            <span class="s4">var </span><span class="s1">navbar = $(</span><span class="s2">&quot;div#navbar-top&quot;</span><span class="s1">);</span>
+            <span class="s1">navbar.height(navbar.prop(</span><span class="s2">&quot;scrollHeight&quot;</span><span class="s1">));</span>
+            <span class="s1">$(</span><span class="s2">&quot;button#navbar-toggle-button&quot;</span><span class="s1">)</span>
+                <span class="s1">.addClass(</span><span class="s2">&quot;expanded&quot;</span><span class="s1">)</span>
+                <span class="s1">.attr(</span><span class="s2">&quot;aria-expanded&quot;</span><span class="s1">, </span><span class="s2">&quot;true&quot;</span><span class="s1">);</span>
+            <span class="s1">expanded = </span><span class="s4">true</span><span class="s1">;</span>
+            <span class="s1">windowWidth = window.innerWidth;</span>
+        <span class="s1">}</span>
+    <span class="s1">});</span>
+    <span class="s1">$(</span><span class="s2">&quot;ul.sub-nav-list-small li a&quot;</span><span class="s1">).click(collapse);</span>
+    <span class="s1">$(</span><span class="s2">&quot;input#search-input&quot;</span><span class="s1">).focus(collapse);</span>
+    <span class="s1">$(</span><span class="s2">&quot;main&quot;</span><span class="s1">).click(collapse);</span>
+    <span class="s1">$(</span><span class="s2">&quot;section[id] &gt; :header, :header[id], :header:has(a[id])&quot;</span><span class="s1">).hover(</span>
+        <span class="s4">function </span><span class="s1">() {</span>
+            <span class="s1">$(</span><span class="s4">this</span><span class="s1">).append($(</span><span class="s2">&quot;&lt;button class='copy copy-header' onclick='copyUrl(this)'&gt; &quot; </span><span class="s1">+</span>
+                <span class="s2">&quot;&lt;img src='&quot; </span><span class="s1">+ pathtoroot + </span><span class="s2">&quot;copy.svg' alt='&quot; </span><span class="s1">+ messages.copyUrl + </span><span class="s2">&quot;'&gt; &quot; </span><span class="s1">+</span>
+                <span class="s2">&quot;&lt;span data-copied='&quot; </span><span class="s1">+ messages.urlCopied + </span><span class="s2">&quot;'&gt;&lt;/span&gt;&lt;/button&gt;&quot;</span><span class="s1">));</span>
+        <span class="s1">},</span>
+        <span class="s4">function </span><span class="s1">() {</span>
+            <span class="s1">$(</span><span class="s4">this</span><span class="s1">).find(</span><span class="s2">&quot;button:last&quot;</span><span class="s1">).remove();</span>
+        <span class="s1">}</span>
+    <span class="s1">);</span>
+    <span class="s1">$(window).on(</span><span class="s2">&quot;orientationchange&quot;</span><span class="s1">, collapse).on(</span><span class="s2">&quot;resize&quot;</span><span class="s1">, </span><span class="s4">function</span><span class="s1">(e) {</span>
+        <span class="s4">if </span><span class="s1">(expanded &amp;&amp; windowWidth !== window.innerWidth) collapse();</span>
+    <span class="s1">});</span>
+    <span class="s4">var </span><span class="s1">search = $(</span><span class="s2">&quot;#search-input&quot;</span><span class="s1">);</span>
+    <span class="s4">var </span><span class="s1">reset = $(</span><span class="s2">&quot;#reset-button&quot;</span><span class="s1">);</span>
+    <span class="s1">search.catcomplete({</span>
+        <span class="s1">minLength: </span><span class="s3">1</span><span class="s1">,</span>
+        <span class="s1">delay: </span><span class="s3">200</span><span class="s1">,</span>
+        <span class="s1">source: doSearch,</span>
+        <span class="s1">response: </span><span class="s4">function</span><span class="s1">(event, ui) {</span>
+            <span class="s4">if </span><span class="s1">(!ui.content.length) {</span>
+                <span class="s1">ui.content.push({ l: messages.noResult });</span>
+            <span class="s1">} </span><span class="s4">else </span><span class="s1">{</span>
+                <span class="s1">$(</span><span class="s2">&quot;#search-input&quot;</span><span class="s1">).empty();</span>
+            <span class="s1">}</span>
+        <span class="s1">},</span>
+        <span class="s1">autoFocus: </span><span class="s4">true</span><span class="s1">,</span>
+        <span class="s1">focus: </span><span class="s4">function</span><span class="s1">(event, ui) {</span>
+            <span class="s4">return false</span><span class="s1">;</span>
+        <span class="s1">},</span>
+        <span class="s1">position: {</span>
+            <span class="s1">collision: </span><span class="s2">&quot;flip&quot;</span>
+        <span class="s1">},</span>
+        <span class="s1">select: </span><span class="s4">function</span><span class="s1">(event, ui) {</span>
+            <span class="s4">if </span><span class="s1">(ui.item.indexItem) {</span>
+                <span class="s4">var </span><span class="s1">url = getURL(ui.item.indexItem, ui.item.category);</span>
+                <span class="s1">window.location.href = pathtoroot + url;</span>
+                <span class="s1">$(</span><span class="s2">&quot;#search-input&quot;</span><span class="s1">).focus();</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+    <span class="s1">});</span>
+    <span class="s1">search.val(</span><span class="s2">''</span><span class="s1">);</span>
+    <span class="s1">search.prop(</span><span class="s2">&quot;disabled&quot;</span><span class="s1">, </span><span class="s4">false</span><span class="s1">);</span>
+    <span class="s1">reset.prop(</span><span class="s2">&quot;disabled&quot;</span><span class="s1">, </span><span class="s4">false</span><span class="s1">);</span>
+    <span class="s1">reset.click(</span><span class="s4">function</span><span class="s1">() {</span>
+        <span class="s1">search.val(</span><span class="s2">''</span><span class="s1">).focus();</span>
+    <span class="s1">});</span>
+    <span class="s1">search.focus();</span>
+<span class="s1">});</span>
+</pre>
+</body>
+</html>
